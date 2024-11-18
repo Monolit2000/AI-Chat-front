@@ -1,0 +1,94 @@
+import { CommonModule } from '@angular/common';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { ChatService } from '../services/chat-service.service';
+import { FormsModule } from '@angular/forms'; 
+import { ChatResponse } from '../chat/chat-response.model';
+
+@Component({
+  selector: 'app-chat',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: './chat.component.html',
+  styleUrls: ['./chat.component.scss']
+})
+export class ChatComponent {
+
+  loading = false;
+  chatId = 'your-chat-id'; 
+  promptText = '';
+  responses:  ChatResponse[] = []; 
+  selectedFile: File | null = null;
+
+  constructor(private chatService: ChatService) {}
+
+  @Input() currentChatId: string | null = null;
+
+  onChatSelected(chatId: string) {
+    this.currentChatId = chatId;
+  }
+
+
+  // ngOnChanges(changes: SimpleChanges) {
+  //   if (changes['currentChatId'] && changes['currentChatId'].currentValue) {
+  //     console.log('Chat ID changed to:', changes['currentChatId'].currentValue);
+     
+  //   }
+  // }
+
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['currentChatId'] && changes['currentChatId'].currentValue) {
+      console.log('Chat ID changed to:', changes['currentChatId'].currentValue);
+      this.loading = true;
+      this.chatService.getAllChatResponsesByChatId(this.currentChatId!).subscribe({
+        next: (responses) => {
+          this.responses = responses; 
+          this.loading = false;
+        },
+        error: (error) => {
+          console.error('Error fetching chat responses:', error);
+          this.loading = false;
+        }
+      });
+    }
+  }
+
+
+  onTextSubmit() {
+    if (this.promptText.trim()) {
+      this.chatService.sendTextPrompt(this.chatId, this.promptText).subscribe(
+        (response: ChatResponse) => {
+          this.responses.push(response);
+          this.promptText = '';
+        },
+        (error) => console.error('Error:', error)
+      );
+    }
+  }
+
+  onFileSelected(event: any) {
+    this.selectedFile = event.target.files[0];
+  }
+
+  onAudioSubmit() {
+    if (this.selectedFile) {
+      this.loading = true;
+      this.chatService.sendAudioPrompt(this.chatId, this.selectedFile, 'Your prompt').subscribe({
+
+        next: (response: ChatResponse) => {
+          console.log('Audio prompt sent successfully', response);
+          this.responses.push(response); 
+          this.selectedFile = null;
+          this.loading = false;
+        },
+        error: (error) => {
+          console.error('Error during the HTTP request:', error);
+          this.loading = false;
+        }
+      });
+    }
+  }
+}
+
+
+

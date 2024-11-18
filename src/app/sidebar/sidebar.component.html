@@ -1,0 +1,17 @@
+<div class="sidebar bg-gray-800 text-white h-full p-4">
+    <button (click)="createChat()" class=" bg-black  text-white p-2 rounded">
+        Create New Chat
+    </button>
+    <h2 class="text-lg font-bold mb-4">Chats</h2>
+    <h3 class="text-lg font-bold mb-4">{{titel !== "" ? titel : "No selected chat"}}</h3>
+    <ul class="space-y-2">
+      <li 
+        *ngFor="let chat of chats" 
+        class="cursor-pointer p-2 rounded hover:bg-gray-700"
+        (click)="handleChatClick(chat)"
+      >
+        {{ chat.name }}
+      </li>
+    </ul>
+  </div>
+
