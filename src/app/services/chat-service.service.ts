@@ -62,7 +62,7 @@ export class ChatService {
   }
 
   getAllChatResponsesByChatId(chatId: string): Observable<ChatResponse[]> {
-    return this.http.get<ChatResponse[]>(`${this.apiUrl}/GetAllChatResponsesByChatId/${chatId}`)
+    return this.http.get<ChatResponse[]>(`${this.apiUrl}/getAllChatResponsesByChatId/${chatId}`)
       .pipe(
         catchError((error) => {
           console.error('Error fetching chat responses:', error);

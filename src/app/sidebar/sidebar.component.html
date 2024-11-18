@@ -6,11 +6,11 @@
     <h3 class="text-lg font-bold mb-4">{{titel !== "" ? titel : "No selected chat"}}</h3>
     <ul class="space-y-2">
       <li 
-        *ngFor="let chat of chats" 
+        *ngFor="let chat of chatDtos" 
         class="cursor-pointer p-2 rounded hover:bg-gray-700"
         (click)="handleChatClick(chat)"
       >
-        {{ chat.name }}
+        {{ chat.chatTitel }}
       </li>
     </ul>
   </div>

@@ -27,9 +27,9 @@ export class SidebarComponent {
 
   chatDtos: ChatDto[] = [];
 
-  // ngOnInit(): void {
-  //   this.loadChats();
-  // }
+  ngOnInit(): void {
+    this.loadChats();
+  }
 
   loadChats(): void {
     this.chatService.getAllChats().subscribe({
@@ -65,8 +65,8 @@ export class SidebarComponent {
   }
 
 
-  handleChatClick(chat: { id: string; name: string }): void {
-    this.selectChat(chat.id);
-    this.onChatSelected(chat.name);
+  handleChatClick(chat: ChatDto ): void {
+    this.selectChat(chat.chatId);
+    this.onChatSelected(chat.chatTitel);
   }
 }
