@@ -21,8 +21,9 @@ export class ChatService {
   sendAudioPrompt(chatId: string, file: File, prompt: string): Observable<ChatResponse> {
     const formData = new FormData();
     formData.append('audioFile', file);
+    formData.append('chatId', chatId);
 
-    return this.http.post<ChatResponse>(`${this.apiUrl}/CreateChatWithTranscription`, formData)
+    return this.http.post<ChatResponse>(`${this.apiUrl}/createTrancription`, formData)
     .pipe(
       catchError((error) => {
         console.error('Error during the HTTP request:', error);

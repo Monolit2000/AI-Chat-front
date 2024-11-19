@@ -40,8 +40,9 @@ export class ChatComponent {
     if (changes['currentChatId'] && changes['currentChatId'].currentValue) {
       console.log('Chat ID changed to:', changes['currentChatId'].currentValue);
       this.loading = true;
+      this.chatId = changes['currentChatId'].currentValue;
       this.chatService.getAllChatResponsesByChatId(this.currentChatId!).subscribe({
-        next: (responses) => {
+        next: (responses: ChatResponse[]) => {
           this.responses = responses; 
           this.loading = false;
         },
