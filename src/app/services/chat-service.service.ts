@@ -22,6 +22,7 @@ export class ChatService {
     const formData = new FormData();
     formData.append('audioFile', file);
     formData.append('chatId', chatId);
+    formData.append('promt', prompt );
 
     return this.http.post<ChatResponse>(`${this.apiUrl}/createTrancription`, formData)
     .pipe(

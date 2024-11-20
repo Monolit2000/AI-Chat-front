@@ -19,6 +19,8 @@ export class SidebarComponent {
 
   titel = "";
 
+  selectedChat: any = null;
+
   chats = [
     { id: 'chat1', name: 'General Chat' },
     { id: 'chat2', name: 'Support Chat' },
@@ -46,6 +48,7 @@ export class SidebarComponent {
 
   selectChat(chatId: string) {
     this.chatSelected.emit(chatId);
+   
   }
 
   onChatSelected(name: string){
@@ -68,5 +71,6 @@ export class SidebarComponent {
   handleChatClick(chat: ChatDto ): void {
     this.selectChat(chat.chatId);
     this.onChatSelected(chat.chatTitel);
+    this.selectedChat = chat;
   }
 }

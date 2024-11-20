@@ -1,7 +1,7 @@
 <div class="flex flex-col h-screen bg-gray-100 ">
   <!-- Chat responses -->
   
-  <div class="flex-1 p-4 overflow-y-auto  flex-col-reverse ">
+  <div class="flex-1 p-4 overflow-y-auto flex-col-reverse" #responseContainer>
     <!-- Если есть сообщения -->
     <ng-container *ngIf="responses.length > 0">
         <div
@@ -15,7 +15,7 @@
       <!-- Если сообщений нет -->
     <div 
       *ngIf="responses.length === 0" 
-      class="flex items-center justify-center h-full text-gray-400 text-center border border-white rounded-lg p-4"
+      class="flex items-center justify-center h-full text-gray-400 text-center border-2 border-black rounded-lg p-4"
     >
       <p>Send your prompt and audio</p>
     </div>
@@ -37,7 +37,7 @@
         type="text"
         [(ngModel)]="promptText"
         placeholder="Type your prompt"
-        class="flex-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+        class="flex-1 p-2 border-2 border-black  rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
       />
 
       <!-- Audio input -->
@@ -63,7 +63,7 @@
       <button
         *ngIf="selectedFile !== null"
         (click)="onAudioSubmit()"
-        class="ml-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 focus:ring focus:ring-green-300"
+        class="ml-2 px-4 py-2 bg-black text-white rounded-lg hover:bg-green-600 focus:ring focus:ring-green-300"
       >
         Send
       </button>

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, ElementRef, ViewChild} from '@angular/core';
 import { ChatService } from '../services/chat-service.service';
 import { FormsModule } from '@angular/forms'; 
 import { ChatResponse } from '../chat/chat-response.model';
@@ -13,6 +13,8 @@ import { ChatResponse } from '../chat/chat-response.model';
 })
 export class ChatComponent {
 
+ 
+
   loading = false;
   chatId = 'your-chat-id'; 
   promptText = '';
@@ -22,6 +24,11 @@ export class ChatComponent {
   constructor(private chatService: ChatService) {}
 
   @Input() currentChatId: string | null = null;
+
+
+  @ViewChild('responseContainer') responseContainer!: ElementRef;
+  private shouldScroll = false;
+
 
   onChatSelected(chatId: string) {
     this.currentChatId = chatId;
@@ -34,6 +41,17 @@ export class ChatComponent {
      
   //   }
   // }
+
+
+  private scrollToBottom() {
+    try {
+      this.responseContainer.nativeElement.scrollTop = this.responseContainer.nativeElement.scrollHeight;
+    } catch (err) {
+      console.error('Error while scrolling:', err);
+    }
+  }
+
+  
 
 
   ngOnChanges(changes: SimpleChanges) {
@@ -73,14 +91,16 @@ export class ChatComponent {
 
   onAudioSubmit() {
     if (this.selectedFile) {
-      this.loading = true;
-      this.chatService.sendAudioPrompt(this.chatId, this.selectedFile, 'Your prompt').subscribe({
+       this.loading = true;
+      this.chatService.sendAudioPrompt(this.chatId, this.selectedFile, this.promptText).subscribe({
 
         next: (response: ChatResponse) => {
           console.log('Audio prompt sent successfully', response);
           this.responses.push(response); 
           this.selectedFile = null;
-          this.loading = false;
+          this.shouldScroll = true;
+           this.loading = false;
+          this.promptText = '';
         },
         error: (error) => {
           console.error('Error during the HTTP request:', error);
