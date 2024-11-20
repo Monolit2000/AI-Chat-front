@@ -60,6 +60,9 @@ export class SidebarComponent {
     this.chatService.createNewChat().subscribe({
       next: (response) => {
         console.log('Chat created successfully:', response);
+        this.chatDtos.unshift(response);
+        this.chatSelected.emit(response.chatId);
+        this.selectedChat = response;
       },
       error: (error) => {
         console.error('Error creating chat:', error);

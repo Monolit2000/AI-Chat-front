@@ -33,8 +33,8 @@ export class ChatService {
     )
   }
 
-  createNewChat(): Observable<any> {
-    return this.http.post(`${this.apiUrl}/CreateChat`, {})
+  createNewChat(): Observable<ChatDto> {
+    return this.http.post<ChatDto>(`${this.apiUrl}/createNewChat`, {})
       .pipe(
         catchError((error) => {
           console.error('Error during creating a new chat:', error);

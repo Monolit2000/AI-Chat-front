@@ -1,7 +1,7 @@
 <div class="flex flex-col h-screen bg-gray-100 ">
   <!-- Chat responses -->
   
-  <div class="flex-1 p-4 overflow-y-auto flex-col-reverse" #responseContainer>
+  <div class="flex-1 p-4 overflow-y-auto flex-col-reverse " #responseContainer >
     <!-- Если есть сообщения -->
     <ng-container *ngIf="responses.length > 0">
         <div
@@ -22,12 +22,12 @@
   </div>
  
   <div 
-  *ngIf="loading" 
-  class="flex items-center justify-center h-full text-blue-500 text-center"
->
-  <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-blue-500 border-opacity-75"></div>
-  <p class="ml-2">Loading...</p>
-</div>
+    *ngIf="loading" 
+    class="flex items-center justify-center h-full text-blue-500 text-center"
+    >
+    <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-blue-500 border-opacity-75"></div>
+    <p class="ml-2">Loading...</p>
+  </div>
 
   <!-- Chat input -->
   <div class="bg-white border-t p-4">
