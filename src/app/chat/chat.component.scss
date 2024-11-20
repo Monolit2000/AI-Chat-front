@@ -26,6 +26,13 @@
 //   }
 
 
+.wrap-text {
+  word-wrap: break-word;       /* Переносит слово на новую строку, если оно длиннее контейнера */
+  word-break: break-word;      /* Переносит строки в случае длинного текста */
+  white-space: normal;         /* Разрешает перенос строк */
+}
+
+
 .fade-in {
   opacity: 0;
   animation: fadeIn 0.5s forwards;

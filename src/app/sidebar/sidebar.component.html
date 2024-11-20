@@ -7,11 +7,11 @@
   <ul class="space-y-2 fade-in ">
     <li 
       *ngFor="let chat of chatDtos" 
-      class="cursor-pointer p-2 rounded hover:bg-gray-700"
+      class="cursor-pointer p-2 rounded hover:bg-gray-700 border border-gray-600"
       [ngClass]="{ 'bg-gray-600': selectedChat?.chatId === chat.chatId }" 
       (click)="handleChatClick(chat)"
     >
-      {{ chat.chatId }}
+    <span class="truncate">{{ chat.chatId }}</span>
     </li>
   </ul>
 </div>
