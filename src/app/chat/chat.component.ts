@@ -25,10 +25,11 @@ export class ChatComponent {
 
   @Input() currentChatId: string | null = null;
 
+  // container = document.getElementById('responseContainer');
 
   @ViewChild('responseContainer') responseContainer!: ElementRef;
-  private shouldScroll = false;
 
+  private shouldScroll = false;
 
   onChatSelected(chatId: string) {
     this.currentChatId = chatId;
@@ -91,16 +92,17 @@ export class ChatComponent {
 
   onAudioSubmit() {
     if (this.selectedFile) {
-       this.loading = true;
+        // this.loading = true;
+       
       this.chatService.sendAudioPrompt(this.chatId, this.selectedFile, this.promptText).subscribe({
 
         next: (response: ChatResponse) => {
           console.log('Audio prompt sent successfully', response);
           this.responses.push(response); 
           this.selectedFile = null;
-          this.shouldScroll = true;
-           this.loading = false;
+          this.loading = false;
           this.promptText = '';
+          this.scrollToBottom()
         },
         error: (error) => {
           console.error('Error during the HTTP request:', error);
