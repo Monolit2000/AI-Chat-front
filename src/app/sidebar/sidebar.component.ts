@@ -75,6 +75,7 @@ export class SidebarComponent {
     this.selectChat(chat.chatId);
     this.onChatSelected(chat.chatTitel);
     this.selectedChat = chat;
+    this.hoveredChatId = chat.chatId
   }
 
 
@@ -86,7 +87,7 @@ export class SidebarComponent {
 
   onActionMenuClick(event: MouseEvent, chat: ChatDto): void {
     event.stopPropagation();
-    this.actionMenuChatId = this.actionMenuChatId === chat.chatId ? null : chat.chatId;
+       this.actionMenuChatId = chat.chatId;
   }
   
   handleMouseEnter(chatId: string): void {
@@ -94,10 +95,10 @@ export class SidebarComponent {
   }
 
   handleMouseLeave(chatId: string): void {
-    // // Оставляем меню открытым, пока курсор не покинет сам элемент
-    // if (this.hoveredChatId !== chatId) {
-    //   this.hoveredChatId = null;
-    // }
+    // Оставляем меню открытым, пока курсор не покинет сам элемент
+    if (this.actionMenuChatId !== chatId) {
+      this.hoveredChatId = null;
+    }
   }
 
   // Обработчик наведения мыши на меню
@@ -122,22 +123,24 @@ export class SidebarComponent {
         // Найти индекс удаляемого чата
         const index = this.chatDtos.findIndex(chat => chat.chatId === chatId);
   
-        if (index !== -1) {
+        if (index === -1) {
+          this.selectedChat = null;
+        }
+        
           // Удалить чат из списка
           this.chatDtos.splice(index, 1);
-  
+          this.selectedChat = null;
+
           // Выбрать предыдущий чат, если он есть
           const previousChat = this.chatDtos[index - 1] || this.chatDtos[0]; // Если предыдущего нет, выбрать первый чат
-  
           if (previousChat) {
             this.chatSelected.emit(previousChat.chatId);
             this.selectedChat = previousChat;
           } else {
-            // Если список чатов пуст
             // this.chatSelected.emit(null);
             this.selectedChat = null;
           }
-        }
+        
       },
       error: (error) => {
         console.error('Error deleting chat:', error);
