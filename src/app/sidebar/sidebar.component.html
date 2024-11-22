@@ -3,15 +3,46 @@
     Create New Chat
   </button>
   <h2 class="text-lg font-bold mb-4">Chats</h2>
-  <!-- <h3 class="text-lg font-bold mb-4">{{ titel !== "" ? titel : "No selected chat" }}</h3> -->
-  <ul class="space-y-2 fade-in ">
-    <li 
-      *ngFor="let chat of chatDtos" 
-      class="cursor-pointer p-2 rounded hover:bg-gray-700 border border-gray-600"
-      [ngClass]="{ 'bg-gray-600': selectedChat?.chatId === chat.chatId }" 
+  <ul class="space-y-2 fade-in">
+    <li
+      *ngFor="let chat of chatDtos"
+      class="relative cursor-pointer p-2 rounded hover:bg-gray-700 border border-gray-600 flex justify-between items-center"
+      [ngClass]="{ 'bg-gray-600': selectedChat?.chatId === chat.chatId }"
       (click)="handleChatClick(chat)"
+      (mouseenter)="handleMouseEnter(chat.chatId)"
     >
-    <span class="truncate">{{ chat.chatTitel }}</span>
+      <span class="truncate">{{ chat.chatTitel }}</span>
+      
+      <div 
+        class="relative" 
+        (click)="onActionMenuClick($event, chat)"
+      >
+        <span 
+          *ngIf="hoveredChatId === chat.chatId" 
+          class="ml-2 text-gray-400 hover:text-white cursor-pointer"
+        >
+          point
+        </span>
+        <ul 
+          *ngIf="actionMenuChatId === chat.chatId"
+          class="absolute right-0 mt-2 w-48 bg-gray-700 border border-gray-600 rounded shadow-lg z-10"
+          (mouseenter)="handleMenuMouseEnter(chat.chatId)" 
+          (mouseleave)="handleMenuMouseLeave(chat.chatId)"
+        >
+        <li 
+        class="px-4 py-2 hover:bg-gray-600 cursor-pointer flex items-center" 
+        (click)="deleteChat(chat.chatId)"
+      >
+        <i class="fas fa-trash-alt mr-2"></i> Delete
+      </li>
+      <li 
+        class="px-4 py-2 hover:bg-gray-600 cursor-pointer flex items-center" 
+        (click)="archiveChat(chat.chatId)"
+      >
+        <i class="fas fa-archive mr-2"></i> Archive
+      </li>
+        </ul>
+      </div>
     </li>
   </ul>
 </div>

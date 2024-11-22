@@ -33,6 +33,20 @@ export class ChatService {
     )
   }
 
+
+  
+  deleteChat(chatId: string) {
+    return this.http.post(`${this.apiUrl}/deleteChat`, {chatId: chatId})
+      .pipe(
+        catchError((error) => {
+          console.error('Error during creating a new chat:', error);
+          return throwError(error);
+        })
+      );
+  }
+
+
+
   createNewChat(): Observable<ChatDto> {
     return this.http.post<ChatDto>(`${this.apiUrl}/createNewChat`, {})
       .pipe(

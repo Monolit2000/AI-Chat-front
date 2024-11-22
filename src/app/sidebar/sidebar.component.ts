@@ -1,8 +1,9 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, HostListener  } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; 
 import { ChatService } from '../services/chat-service.service';
 import { ChatDto } from '../chat/chat-dto';
+import { ChatActionDto } from './chat-action-dto';
 
 @Component({
   selector: 'app-sidebar',
@@ -19,7 +20,6 @@ export class SidebarComponent {
 
   titel = "";
 
-  selectedChat: any = null;
 
   chats = [
     { id: 'chat1', name: 'General Chat' },
@@ -75,5 +75,86 @@ export class SidebarComponent {
     this.selectChat(chat.chatId);
     this.onChatSelected(chat.chatTitel);
     this.selectedChat = chat;
+  }
+
+
+  chatActions: ChatActionDto[] = [];
+
+  selectedChat: ChatDto | null = null;
+  hoveredChatId: string | null = null;
+  actionMenuChatId: string | null = null;
+
+  onActionMenuClick(event: MouseEvent, chat: ChatDto): void {
+    event.stopPropagation();
+    this.actionMenuChatId = this.actionMenuChatId === chat.chatId ? null : chat.chatId;
+  }
+  
+  handleMouseEnter(chatId: string): void {
+    this.hoveredChatId = chatId;
+  }
+
+  handleMouseLeave(chatId: string): void {
+    // // Оставляем меню открытым, пока курсор не покинет сам элемент
+    // if (this.hoveredChatId !== chatId) {
+    //   this.hoveredChatId = null;
+    // }
+  }
+
+  // Обработчик наведения мыши на меню
+  handleMenuMouseEnter(chatId: string): void {
+    // Не скрывать меню, когда курсор на меню
+    this.hoveredChatId = chatId;
+  }
+
+  // Обработчик ухода мыши с меню
+  handleMenuMouseLeave(chatId: string): void {
+    // Скрываем меню только если курсор ушел с самого меню
+    if (this.hoveredChatId === chatId) {
+      this.hoveredChatId = null;
+    }
+  }
+
+  deleteChat(chatId: string): void {
+    this.chatService.deleteChat(chatId).subscribe({
+      next: () => {
+        console.log('Chat deleted successfully');
+  
+        // Найти индекс удаляемого чата
+        const index = this.chatDtos.findIndex(chat => chat.chatId === chatId);
+  
+        if (index !== -1) {
+          // Удалить чат из списка
+          this.chatDtos.splice(index, 1);
+  
+          // Выбрать предыдущий чат, если он есть
+          const previousChat = this.chatDtos[index - 1] || this.chatDtos[0]; // Если предыдущего нет, выбрать первый чат
+  
+          if (previousChat) {
+            this.chatSelected.emit(previousChat.chatId);
+            this.selectedChat = previousChat;
+          } else {
+            // Если список чатов пуст
+            // this.chatSelected.emit(null);
+            this.selectedChat = null;
+          }
+        }
+      },
+      error: (error) => {
+        console.error('Error deleting chat:', error);
+      },
+    });
+  }
+
+  archiveChat(chatId: string): void {
+    console.log(`Архивировать чат с ID: ${chatId}`);
+    // Логика для архивирования
+    this.actionMenuChatId = null;
+  }
+
+
+  // Закрытие меню при клике вне его
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    this.actionMenuChatId = null;
   }
 }
