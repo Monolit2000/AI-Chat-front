@@ -33,29 +33,18 @@
 }
 
 
-  .sidebar ul li {
+  .sidebar  {
     width: 250px;
     min-height: 100%;
   }
   
   .sidebar ul li span {
-    display: inline-block;
+    // display: inline-block;
     max-width: calc(100% - 30px); /* Учитываем место для многоточий */
     overflow: hidden;
     // text-overflow: ellipsis;
     white-space: nowrap;
   }
-  
-  // .sidebar ul li div ul {
-  //   display: none;
-  // }
-  
-  // .sidebar ul li div:hover ul {
-  //   display: block;
-  // }
-
-
-
 
   .fade-in {
     opacity: 0;
