@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnChanges, SimpleChanges, ElementRef, ViewChild} from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, ElementRef, ViewChild } from '@angular/core';
 import { ChatService } from '../services/chat-service.service';
 import { FormsModule } from '@angular/forms'; 
 import { ChatResponse } from '../chat/chat-response.model';
@@ -92,7 +92,7 @@ export class ChatComponent {
 
   onAudioSubmit() {
     if (this.selectedFile) {
-        // this.loading = true;
+        this.loading = true;
        
       this.chatService.sendAudioPrompt(this.chatId, this.selectedFile, this.promptText).subscribe({
 
@@ -111,6 +111,7 @@ export class ChatComponent {
       });
     }
   }
+
 }
 
 

@@ -85,6 +85,9 @@ export class SidebarComponent {
   hoveredChatId: string | null = null;
   actionMenuChatId: string | null = null;
 
+  hoveredChatsId: string[] = [];
+  // actionMenuChatsId: string[] = [];
+
   onActionMenuClick(event: MouseEvent, chat: ChatDto): void {
     event.stopPropagation();
        this.actionMenuChatId = chat.chatId;
@@ -95,7 +98,6 @@ export class SidebarComponent {
   }
 
   handleMouseLeave(chatId: string): void {
-    // Оставляем меню открытым, пока курсор не покинет сам элемент
     if (this.actionMenuChatId !== chatId) {
       this.hoveredChatId = null;
     }
@@ -133,7 +135,7 @@ export class SidebarComponent {
 
           // Выбрать предыдущий чат, если он есть
           const previousChat = this.chatDtos[index - 1] || this.chatDtos[0]; // Если предыдущего нет, выбрать первый чат
-          if (previousChat) {
+          if (previousChat && this.selectedChat === chatId) {
             this.chatSelected.emit(previousChat.chatId);
             this.selectedChat = previousChat;
           } else {

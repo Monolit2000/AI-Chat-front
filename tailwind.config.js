@@ -4,8 +4,15 @@ module.exports = {
     "./src/**/*.{html,ts}", // Указываем пути к файлам Angular
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        customGray: '#26282C',
+        customBgForChat: '#131417',
+      },
+    },
   },
-  plugins: [],
+  plugins: [
+    
+  ],
 }
 

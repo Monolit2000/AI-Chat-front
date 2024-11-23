@@ -1,4 +1,4 @@
-<div class="sidebar bg-gray-800 text-white h-full p-4 overflow-y-auto">
+<div class="sidebar bg-black text-white h-full p-4 overflow-y-auto">
   <button (click)="createChat()" class="bg-black text-white p-2 rounded">
     Create New Chat
   </button>
@@ -6,8 +6,8 @@
   <ul class="space-y-2 fade-in">
     <li
       *ngFor="let chat of chatDtos"
-      class="relative cursor-pointer p-2 rounded hover:bg-gray-700 border border-gray-600 flex justify-between items-center"
-      [ngClass]="{ 'bg-gray-600': selectedChat?.chatId === chat.chatId }"
+      class="relative cursor-pointer p-2 rounded hover:bg-customGray rounded-xl  flex justify-between items-center"
+      [ngClass]="{ 'bg-customGray': selectedChat?.chatId === chat.chatId || actionMenuChatId === chat.chatId}"
       (click)="handleChatClick(chat)"
       (mouseenter)="handleMouseEnter(chat.chatId)"
       (mouseleave)="handleMouseLeave(chat.chatId)"
@@ -15,16 +15,16 @@
       <span class="truncate">{{ chat.chatTitel }}</span>
       
       <div class="relative" (click)="onActionMenuClick($event, chat)">
-        <span *ngIf="hoveredChatId === chat.chatId" class="ml-2 text-gray-400 cursor-pointer">
+        <span *ngIf="hoveredChatId === chat.chatId || selectedChat?.chatId === chat.chatId || actionMenuChatId === chat.chatId" class="ml-2 text-gray-400 cursor-pointer">
           point
         </span>
         <ul 
           *ngIf="actionMenuChatId === chat.chatId"
-          class="absolute right-0 mt-2 w-48 bg-gray-700 border border-gray-600 rounded shadow-lg z-10"
+          class="absolute right-0 mt-2 w-48 bg-customGray  rounded-xl shadow-lg z-10"
           (mouseenter)="handleMenuMouseEnter(chat.chatId)" 
           (mouseleave)="handleMenuMouseLeave(chat.chatId)"
         >
-          <li 
+          <li  
             class="px-4 py-2 hover:bg-gray-600 cursor-pointer flex items-center" 
             (click)="deleteChat(chat.chatId)"
           >
