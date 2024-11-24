@@ -13,6 +13,7 @@ import { ChatResponse } from '../chat/chat-response.model';
 })
 export class ChatComponent {
 
+
  
 
   loading = false;
@@ -44,9 +45,26 @@ export class ChatComponent {
   // }
 
 
-  private scrollToBottom() {
+  // private scrollToBottom() {
+  //   try {
+  //     this.responseContainer.nativeElement.scrollTo({
+  //       top: this.responseContainer.nativeElement.scrollHeight,
+  //       behavior: 'smooth',
+  //     });
+  //   } catch (err) {
+  //     console.error('Error while scrolling:', err);
+  //   }
+  // }
+
+  private scrollToBottom(delay: number = 0) {
     try {
-      this.responseContainer.nativeElement.scrollTop = this.responseContainer.nativeElement.scrollHeight;
+      // Устанавливаем таймер (если delay > 0)
+      setTimeout(() => {
+        this.responseContainer.nativeElement.scrollTo({
+          top: this.responseContainer.nativeElement.scrollHeight,
+          behavior: 'smooth',
+        });
+      }, delay);
     } catch (err) {
       console.error('Error while scrolling:', err);
     }
@@ -64,6 +82,7 @@ export class ChatComponent {
         next: (responses: ChatResponse[]) => {
           this.responses = responses; 
           this.loading = false;
+          this.scrollToBottom();
         },
         error: (error) => {
           console.error('Error fetching chat responses:', error);
@@ -93,8 +112,7 @@ export class ChatComponent {
   onAudioSubmit() {
     if (this.selectedFile) {
         this.loading = true;
-       
-      this.chatService.sendAudioPrompt(this.chatId, this.selectedFile, this.promptText).subscribe({
+        this.chatService.sendAudioPrompt(this.chatId, this.selectedFile, this.promptText).subscribe({
 
         next: (response: ChatResponse) => {
           console.log('Audio prompt sent successfully', response);
@@ -109,6 +127,11 @@ export class ChatComponent {
           this.loading = false;
         }
       });
+    }
+    else if(this.selectedFile === null && this.promptText !== ''){
+      this.onTextSubmit();
+      this.scrollToBottom();
+      this.scrollToBottom(300);
     }
   }
 

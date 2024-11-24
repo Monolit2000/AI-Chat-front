@@ -14,9 +14,16 @@ export class ChatService {
 
   constructor(private http: HttpClient) {}
 
-  sendTextPrompt(chatId: string, prompt: string): Observable<ChatResponse> {
-    return this.http.post<ChatResponse>(`${this.apiUrl}/text`, { chatId, prompt });
+  sendTextPrompt(chatId: string, promt: string): Observable<ChatResponse> {
+
+    return this.http.post<ChatResponse>(`${this.apiUrl}/createChatResponseOnText`, { chatId: chatId ,promt: promt });
   }
+
+  renameChat(chatId: string, newChatTitel: string){
+
+    return this.http.post<ChatResponse>(`${this.apiUrl}/renameChat`, { chatId: chatId ,newChatTitel: newChatTitel });
+  }
+
 
   sendAudioPrompt(chatId: string, file: File, prompt: string): Observable<ChatResponse> {
     const formData = new FormData();

@@ -7,7 +7,7 @@
       <ng-container *ngIf="responses.length > 0">
           <div
             *ngFor="let response of responses "
-            class="bg-customBgForChat p-3 rounded-lg shadow mb-2 fade-in "
+            class="bg-customBgForChat p-3 rounded-lg shadow mb-2 fade-in hover:bg-customGray duration-200 "
           >
             <p class="text-white wrap-text">{{ response.conetent }}</p>
           </div>
@@ -24,9 +24,9 @@
   
     <div 
       *ngIf="loading" 
-      class="flex items-center justify-center h-full text-blue-500 text-center"
+      class="flex items-center justify-center h-full text-white text-center"
       >
-      <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-blue-500 border-opacity-75"></div>
+      <div class="animate-spin rounded-full h-8 w-8 border-t-2 text-white border-opacity-75"></div>
       <p class="ml-2">Loading...</p>
     </div>
 
@@ -38,7 +38,8 @@
           type="text"
           [(ngModel)]="promptText"
           placeholder="Type your prompt"
-          class="flex-1 p-2 border-2 text-white border-black  rounded-lg focus:outline-none focus:ring focus:ring-blue-300  bg-customBgForChat"
+          (keyup.enter)="onAudioSubmit()"
+          class="flex-1 p-2 border-4  placeholder-gray-300 text-white border-black rounded-lg focus:outline-none focus:ring focus:ring-customGray bg-customBgForChat"
         />
 
         <!-- Audio input -->
@@ -48,7 +49,9 @@
             (change)="onFileSelected($event)"
             class="hidden"
           />
-          <span class="cursor-pointer px-3 py-2 bg-black text-white rounded-lg hover:bg-green-600 focus:ring focus:ring-green-300">
+          <span 
+          [ngClass]="{ 'bg-white text-black': selectedFile !== null }"
+          class="cursor-pointer px-3 py-2 bg-black text-white rounded-lg hover:bg-white hover:text-black focus:ring focus:ring-green-300 duration-200">
             <i class="fa-solid fa-microphone-lines"></i>
           </span>
         </label>
@@ -56,18 +59,19 @@
         <!-- Submit button -->
         <button
           (click)="onAudioSubmit()"
-          class="px-4 py-2 bg-black text-white rounded-lg hover:border-white "
+          class="px-4 py-2 bg-black text-white rounded-lg hover:bg-white hover:text-black duration-200"
+          [ngClass]="{' text-customBgForChat': selectedFile === null && promptText === ''}"
         >
-          send
+        <i class="fa-solid fa-circle-arrow-up"></i>
         </button>
 
-        <button
+        <!-- <button
           *ngIf="selectedFile !== null"
           (click)="onAudioSubmit()"
           class="ml-2 px-4 py-2 bg-black text-white rounded-lg hover:bg-green-600 focus:ring focus:ring-green-300"
         >
           Send
-        </button>
+        </button> -->
       </div>
     </div>
   </div>

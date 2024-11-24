@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { ChatService } from '../services/chat-service.service';
 import { ChatDto } from '../chat/chat-dto';
 
-
 @Component({
   selector: 'app-chat-list',
   standalone: true,
@@ -29,10 +28,45 @@ export class ChatListComponent {
     this.loadChats();
   }
 
+
+  editingChatId: string | null = null;
+
+  startEditing(chatId: string): void {
+    this.editingChatId = chatId;
+  }
+
+  stopEditing(chat: ChatDto): void {
+    this.editingChatId = null;
+
+    this.chatService.renameChat(chat.chatId, chat.chatTitel).subscribe({
+      next:() =>{
+        console.log('Chat renamed:', chat.chatTitel);
+      },
+      error:(error) => {
+        console.error('Error deleting chat:', error);
+      },
+    });
+
+  }
+
+
   loadChats(): void {
     this.chatService.getAllChats().subscribe({
       next: (data) => {
         this.chatDtos = data;
+
+         // Получение первого элемента массива
+      const firstChat = this.chatDtos[0];
+
+      if (firstChat) {
+        // Извлекаем ID первого чата, если он существует
+        const chatId = firstChat.chatId;
+
+        // Эмитим событие с ID первого чата
+        this.chatSelected.emit(chatId);
+      } else {
+        console.warn('No chats found');
+      }
       },
       error: (error) => {
         console.error('Error loading chats:', error);
@@ -43,7 +77,6 @@ export class ChatListComponent {
 
   selectChat(chatId: string) {
     this.chatSelected.emit(chatId);
-   
   }
 
   onChatSelected(name: string){
@@ -73,10 +106,6 @@ export class ChatListComponent {
     this.hoveredChatId = chat.chatId
   }
 
-
-  hoveredChatsId: string[] = [];
-  // actionMenuChatsId: string[] = [];
-
   onActionMenuClick(event: MouseEvent, chat: ChatDto): void {
     event.stopPropagation();
        this.actionMenuChatId = chat.chatId;
@@ -92,15 +121,11 @@ export class ChatListComponent {
     }
   }
 
-  // Обработчик наведения мыши на меню
   handleMenuMouseEnter(chatId: string): void {
-    // Не скрывать меню, когда курсор на меню
     this.hoveredChatId = chatId;
   }
 
-  // Обработчик ухода мыши с меню
   handleMenuMouseLeave(chatId: string): void {
-    // Скрываем меню только если курсор ушел с самого меню
     if (this.hoveredChatId === chatId) {
       this.hoveredChatId = null;
     }
@@ -111,28 +136,18 @@ export class ChatListComponent {
       next: () => {
         console.log('Chat deleted successfully');
   
-        // Найти индекс удаляемого чата
-
-        //         
-         const index = this.chatDtos.findIndex(chat => chat.chatId === chatId);
+        const index = this.chatDtos.findIndex(chat => chat.chatId === chatId);
         if (index === -1) {
           this.selectedChat = null;
           return;
         }
-        
-        // // Удалить чат из списка
-        // this.chatDtos.splice(index, 1);
-
-
           this.chatDtos = this.chatDtos.filter(c => c.chatId !== chatId);
 
           if(this.selectedChat?.chatId !== chatId){
             return;
           }
 
-
-          // Выбрать предыдущий чат, если он есть
-          const previousChat = this.chatDtos[index - 1] || this.chatDtos[0]; // Если предыдущего нет, выбрать первый чат
+          const previousChat = this.chatDtos[index - 1] || this.chatDtos[0]; 
           if (previousChat && this.selectedChat.chatId === chatId) {
             this.chatSelected.emit(previousChat.chatId);
             this.selectedChat = previousChat;
@@ -150,14 +165,12 @@ export class ChatListComponent {
 
   archiveChat(chatId: string): void {
     console.log(`Архивировать чат с ID: ${chatId}`);
-    // Логика для архивирования
     this.actionMenuChatId = null;
   }
 
-
-  // Закрытие меню при клике вне его
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     this.actionMenuChatId = null;
+    // this.editingChatId = null;
   }
 }

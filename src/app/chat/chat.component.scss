@@ -1,5 +1,26 @@
 
 
+.chatgpt-input {
+  width: 100%;
+  padding: 12px 16px; /* Внутренний отступ */
+  border: 1px solid #4a5568; /* Цвет рамки */
+  border-radius: 24px; /* Закругление углов */
+  background-color: #2d3748; /* Цвет фона */
+  color: white; /* Цвет текста */
+  font-size: 16px; /* Размер текста */
+  outline: none; /* Убирает стандартное выделение */
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.chatgpt-input::placeholder {
+  color: #a0aec0; /* Цвет текста placeholder */
+}
+
+.chatgpt-input:focus {
+  border-color: #3182ce; /* Цвет рамки при фокусе */
+  box-shadow: 0 0 10px rgba(49, 130, 206, 0.5); /* Тень при фокусе */
+}
+
 /* Затемнение при загрузке */
 .loading-dim {
   position: absolute;
