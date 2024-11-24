@@ -1,43 +1,4 @@
-<div class="sidebar bg-black text-white h-full p-4 overflow-y-auto">
-  <button (click)="createChat()" class="bg-black text-white p-2 rounded">
-    Create New Chat
-  </button>
-  <h2 class="text-lg font-bold mb-4">Chats</h2>
-  <hr class="border-t-2 border-gray-400 mb-4">
-  <ul class="space-y-2 fade-in">
-    <li
-      *ngFor="let chat of chatDtos"
-      class="relative cursor-pointer p-2 rounded-xl  hover:bg-customGray  flex justify-between items-center"
-      [ngClass]="{ 'bg-customGray': selectedChat?.chatId === chat.chatId || actionMenuChatId === chat.chatId}"
-      (click)="handleChatClick(chat)"
-      (mouseenter)="handleMouseEnter(chat.chatId)"
-      (mouseleave)="handleMouseLeave(chat.chatId)"
-    >
-      <span class="truncate">{{ chat.chatTitel }}</span>
-      
-      <div class="relative" (click)="onActionMenuClick($event, chat)">
-        <span *ngIf="hoveredChatId === chat.chatId || selectedChat?.chatId === chat.chatId || actionMenuChatId === chat.chatId" 
-        class="ml-2 text-gray-400 cursor-pointer text-center ">
-          ^_^
-        </span>
-        <ul 
-        *ngIf="actionMenuChatId === chat.chatId"
-        class="absolute right-0 mt-4 w-48 bg-customGray rounded-xl shadow-lg z-10"
-      >
-        <li  
-          class="px-4 py-2 hover:bg-red-500 hover:rounded-xl cursor-pointer flex items-center transition-all duration-200"
-          (click)="deleteChat(chat.chatId)"
-        >
-          <i class="fas fa-trash-alt mr-2"></i> Delete
-        </li>
-        <li  
-          class="px-4 py-2 hover:bg-gray-600 hover:rounded-xl cursor-pointer flex items-center transition-all duration-200"
-          (click)="archiveChat(chat.chatId)"
-        >
-          <i class="fas fa-archive mr-2"></i> Archive
-        </li>
-      </ul>
-      </div>
-    </li>
-  </ul>
-</div>
+<app-chat-list (chatSelected)="onChatSelectedd($event)"></app-chat-list>
+
+
+
