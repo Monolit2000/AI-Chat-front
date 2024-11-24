@@ -123,19 +123,28 @@ export class SidebarComponent {
         console.log('Chat deleted successfully');
   
         // Найти индекс удаляемого чата
-        const index = this.chatDtos.findIndex(chat => chat.chatId === chatId);
-  
+
+        //         
+         const index = this.chatDtos.findIndex(chat => chat.chatId === chatId);
         if (index === -1) {
           this.selectedChat = null;
+          return;
         }
         
-          // Удалить чат из списка
-          this.chatDtos.splice(index, 1);
-          this.selectedChat = null;
+        // // Удалить чат из списка
+        // this.chatDtos.splice(index, 1);
+
+
+          this.chatDtos = this.chatDtos.filter(c => c.chatId !== chatId);
+
+          if(this.selectedChat?.chatId !== chatId){
+            return;
+          }
+
 
           // Выбрать предыдущий чат, если он есть
           const previousChat = this.chatDtos[index - 1] || this.chatDtos[0]; // Если предыдущего нет, выбрать первый чат
-          if (previousChat && this.selectedChat === chatId) {
+          if (previousChat && this.selectedChat.chatId === chatId) {
             this.chatSelected.emit(previousChat.chatId);
             this.selectedChat = previousChat;
           } else {

@@ -1,72 +1,74 @@
-<div class="flex flex-col h-screen bg-customBgForChat ">
-  <!-- Chat responses -->
-  
-  <div class="flex-1 p-4 overflow-y-auto flex-col-reverse " #responseContainer >
-    <!-- Если есть сообщения -->
-    <ng-container *ngIf="responses.length > 0">
-        <div
-          *ngFor="let response of responses "
-          class="bg-customBgForChat p-3 rounded-lg shadow mb-2 fade-in "
-        >
-          <p class="text-white wrap-text">{{ response.conetent }}</p>
-        </div>
-      </ng-container>
+<div class="bg-black " >
+  <div class="flex flex-col h-screen bg-customBgForChat rounded-3xl">
+    <!-- Chat responses -->
+    
+    <div class="flex-1 p-4 overflow-y-auto flex-col-reverse " #responseContainer >
+      <!-- Если есть сообщения -->
+      <ng-container *ngIf="responses.length > 0">
+          <div
+            *ngFor="let response of responses "
+            class="bg-customBgForChat p-3 rounded-lg shadow mb-2 fade-in "
+          >
+            <p class="text-white wrap-text">{{ response.conetent }}</p>
+          </div>
+        </ng-container>
 
-      <!-- Если сообщений нет -->
-    <div 
-      *ngIf="responses.length === 0" 
-      class="flex items-center justify-center h-full text-gray-400 text-center rounded-lg p-4"
-    >
-      <p>Send your prompt and audio</p>
+        <!-- Если сообщений нет -->
+      <div 
+        *ngIf="responses.length === 0" 
+        class="flex items-center justify-center h-full text-gray-400 text-center rounded-lg p-4"
+      >
+        <p>Send your prompt and audio</p>
+      </div>
     </div>
-  </div>
- 
-  <div 
-    *ngIf="loading" 
-    class="flex items-center justify-center h-full text-blue-500 text-center"
-    >
-    <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-blue-500 border-opacity-75"></div>
-    <p class="ml-2">Loading...</p>
-  </div>
+  
+    <div 
+      *ngIf="loading" 
+      class="flex items-center justify-center h-full text-blue-500 text-center"
+      >
+      <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-blue-500 border-opacity-75"></div>
+      <p class="ml-2">Loading...</p>
+    </div>
 
-  <!-- Chat input -->
-  <div class="bg-customBgForChat p-4">
-    <div class="flex items-center gap-2">
-      <!-- Text input -->
-      <input 
-        type="text"
-        [(ngModel)]="promptText"
-        placeholder="Type your prompt"
-        class="flex-1 p-2 border-2 text-white border-black  rounded-lg focus:outline-none focus:ring focus:ring-blue-300  bg-customBgForChat"
-      />
-
-      <!-- Audio input -->
-      <label class="flex items-center">
-        <input
-          type="file"
-          (change)="onFileSelected($event)"
-          class="hidden"
+    <!-- Chat input -->
+    <div class="bg-customBgForChat p-4">
+      <div class="flex items-center gap-2">
+        <!-- Text input -->
+        <input 
+          type="text"
+          [(ngModel)]="promptText"
+          placeholder="Type your prompt"
+          class="flex-1 p-2 border-2 text-white border-black  rounded-lg focus:outline-none focus:ring focus:ring-blue-300  bg-customBgForChat"
         />
-        <span class="cursor-pointer px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 focus:ring focus:ring-green-300">
-          🎙️
-        </span>
-      </label>
 
-      <!-- Submit button -->
-      <button
-        (click)="onTextSubmit()"
-        class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:ring focus:ring-blue-300"
-      >
-        send
-      </button>
+        <!-- Audio input -->
+        <label class="flex items-center">
+          <input
+            type="file"
+            (change)="onFileSelected($event)"
+            class="hidden"
+          />
+          <span class="cursor-pointer px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 focus:ring focus:ring-green-300">
+            🎙️
+          </span>
+        </label>
 
-      <button
-        *ngIf="selectedFile !== null"
-        (click)="onAudioSubmit()"
-        class="ml-2 px-4 py-2 bg-black text-white rounded-lg hover:bg-green-600 focus:ring focus:ring-green-300"
-      >
-        Send
-      </button>
+        <!-- Submit button -->
+        <button
+          (click)="onTextSubmit()"
+          class="px-4 py-2 bg-black text-white rounded-lg hover:border-white focus:ring"
+        >
+          send
+        </button>
+
+        <button
+          *ngIf="selectedFile !== null"
+          (click)="onAudioSubmit()"
+          class="ml-2 px-4 py-2 bg-black text-white rounded-lg hover:bg-green-600 focus:ring focus:ring-green-300"
+        >
+          Send
+        </button>
+      </div>
     </div>
   </div>
 </div>
