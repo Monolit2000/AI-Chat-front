@@ -1,9 +1,6 @@
-import { Component, EventEmitter, Output, HostListener  } from '@angular/core';
+import { Component, EventEmitter, Output} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; 
-import { ChatService } from '../services/chat-service.service';
-import { ChatDto } from '../chat/chat-dto';
-import { ChatActionDto } from './chat-action-dto';
 import { ChatListComponent } from '../chat-list/chat-list.component';
 
 @Component({

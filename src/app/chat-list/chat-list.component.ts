@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, HostListener  } from '@angular/core';
+import { Component, EventEmitter, Output, HostListener,ViewChild, ElementRef  } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; 
 import { ChatService } from '../services/chat-service.service';
@@ -17,6 +17,7 @@ export class ChatListComponent {
 
   @Output() chatSelected = new EventEmitter<string>();
 
+  @ViewChild('inputField', { static: false }) inputField: ElementRef | undefined;
   
   titel = "";
   selectedChat: ChatDto | null = null;
@@ -33,7 +34,17 @@ export class ChatListComponent {
   editingChatId: string | null = null;
 
   startEditing(chatId: string): void {
-    this.editingChatId = chatId;
+    if(this.editingChatId === chatId){
+      this.editingChatId = null
+    }
+    else{
+      this.editingChatId = chatId;
+      setTimeout(() => {
+        if (this.inputField && this.inputField.nativeElement) {
+          this.inputField.nativeElement.focus();
+        }
+      }, 0);
+    }
   }
 
   stopEditing(chat: ChatDto): void {

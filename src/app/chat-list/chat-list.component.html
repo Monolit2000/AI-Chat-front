@@ -18,6 +18,7 @@
           (click)="handleChatClick(chat)"
           (mouseenter)="handleMouseEnter(chat.chatId)"
           (mouseleave)="handleMouseLeave(chat.chatId)"
+          (dblclick)="startEditing(chat.chatId)"
         >
           <!-- Chat title or input for renaming -->
             <span 
@@ -27,6 +28,7 @@
               {{ chat.chatTitel }}
             </span>
             <input
+              #inputField
               *ngIf="editingChatId === chat.chatId"
               [(ngModel)]="chat.chatTitel"
               class="w-full p-2 border rounded-lg text-black"

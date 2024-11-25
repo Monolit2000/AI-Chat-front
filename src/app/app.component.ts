@@ -19,6 +19,5 @@ export class AppComponent {
   onChatSelected(chatId: string) {
     this.selectedChatId = chatId;
     console.log('Selected chat:', chatId);
-    // Здесь можно обновлять данные компонента чата
   }
 }
