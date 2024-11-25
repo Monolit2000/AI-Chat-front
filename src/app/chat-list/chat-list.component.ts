@@ -33,12 +33,20 @@ export class ChatListComponent {
 
   editingChatId: string | null = null;
 
+  oldChatTitle: string | null = null;
+
   startEditing(chatId: string): void {
     if(this.editingChatId === chatId){
       this.editingChatId = null
     }
     else{
       this.editingChatId = chatId;
+
+      const chat = this.chatDtos.find(c => c.chatId === chatId);
+      if (chat) {
+        this.oldChatTitle = chat.chatTitel; // Сохранить старое имя
+      }
+
       setTimeout(() => {
         if (this.inputField && this.inputField.nativeElement) {
           this.inputField.nativeElement.focus();
@@ -49,6 +57,14 @@ export class ChatListComponent {
 
   stopEditing(chat: ChatDto): void {
     this.editingChatId = null;
+
+    if(chat.chatTitel === null || chat.chatTitel === ''){
+      return;
+    }
+
+    if(this.oldChatTitle === chat.chatTitel){
+      return;
+    }
 
     this.chatService.renameChat(chat.chatId, chat.chatTitel).subscribe({
       next:() =>{
