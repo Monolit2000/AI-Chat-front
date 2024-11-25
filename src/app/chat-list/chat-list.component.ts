@@ -4,12 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { ChatService } from '../services/chat-service.service';
 import { ChatDto } from '../chat/chat-dto';
 
+
 @Component({
   selector: 'app-chat-list',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './chat-list.component.html',
-  styleUrl: './chat-list.component.scss'
+  styleUrl: './chat-list.component.scss',
 })
 export class ChatListComponent {
   constructor(private chatService: ChatService) {}
@@ -49,6 +50,19 @@ export class ChatListComponent {
 
   }
 
+  deletingChatId: string | null = null; // Храним ID удаляемого чата
+
+  deleteChatV2(chatId: string) {
+    this.deletingChatId = chatId;
+
+    // Задержка перед удалением, чтобы анимация успела пройти
+    setTimeout(() => {
+      this.chatDtos = this.chatDtos.filter(chat => chat.chatId !== chatId);
+      this.deletingChatId = null;
+    }, 1000); 
+  }
+
+
 
   loadChats(): void {
     this.chatService.getAllChats().subscribe({
@@ -62,6 +76,7 @@ export class ChatListComponent {
         // Извлекаем ID первого чата, если он существует
         const chatId = firstChat.chatId;
 
+        this.selectedChat = firstChat
         // Эмитим событие с ID первого чата
         this.chatSelected.emit(chatId);
       } else {
@@ -135,17 +150,25 @@ export class ChatListComponent {
     this.chatService.deleteChat(chatId).subscribe({
       next: () => {
         console.log('Chat deleted successfully');
+
+        this.deletingChatId = chatId;
   
         const index = this.chatDtos.findIndex(chat => chat.chatId === chatId);
         if (index === -1) {
           this.selectedChat = null;
           return;
+          
         }
-          this.chatDtos = this.chatDtos.filter(c => c.chatId !== chatId);
+
+        setTimeout(() => {
+          this.chatDtos = this.chatDtos.filter(chat => chat.chatId !== chatId);
+          this.deletingChatId = null;
+        }, 1000);
 
           if(this.selectedChat?.chatId !== chatId){
             return;
           }
+          
 
           const previousChat = this.chatDtos[index - 1] || this.chatDtos[0]; 
           if (previousChat && this.selectedChat.chatId === chatId) {
@@ -153,7 +176,20 @@ export class ChatListComponent {
             this.selectedChat = previousChat;
           } else {
             // this.chatSelected.emit(null);
-            this.selectedChat = null;
+            const firstChat = this.chatDtos[0];
+
+            if (firstChat) {
+              // Извлекаем ID первого чата, если он существует
+              const chatId = firstChat.chatId;
+
+              this.selectedChat = firstChat;
+      
+              // Эмитим событие с ID первого чата
+              this.chatSelected.emit(chatId);
+            } else {
+              console.warn('No chats found');
+            }
+
           }
         
       },

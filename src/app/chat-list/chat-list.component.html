@@ -1,14 +1,20 @@
 <div class="sidebar bg-black text-white h-full p-4 overflow-y-auto">
-    <button (click)="createChat()" class="bg-black hover:bg-customGray text-white p-2 rounded">
+    
+    <button (click)="createChat()" class="bg-black hover:bg-customGray text-white  text-lg mb-4 rounded">
         <i class="fa-solid fa-plus"></i> Create New Chat
     </button>
-    <h2 class="text-lg font-bold mb-4">Chats</h2>
+    
     <hr class="border-t-2 border-gray-400 mb-4">
     <ul class="space-y-2 fade-in">
         <li
           *ngFor="let chat of chatDtos"
           class="relative cursor-pointer p-2 rounded-xl hover:bg-customGray flex justify-between items-center"
-          [ngClass]="{ 'bg-customGray': selectedChat?.chatId === chat.chatId || actionMenuChatId === chat.chatId }"
+        
+          [ngClass]="{
+            'bg-customGray': selectedChat?.chatId === chat.chatId || actionMenuChatId === chat.chatId,
+            'transition-all duration-1000 ease-in-out': deletingChatId === chat.chatId,
+            'bg-red-600 opacity-0': deletingChatId === chat.chatId
+          }"
           (click)="handleChatClick(chat)"
           (mouseenter)="handleMouseEnter(chat.chatId)"
           (mouseleave)="handleMouseLeave(chat.chatId)"

@@ -69,7 +69,6 @@ export class ChatComponent {
       console.error('Error while scrolling:', err);
     }
   }
-
   
 
 
@@ -106,7 +105,12 @@ export class ChatComponent {
   }
 
   onFileSelected(event: any) {
-    this.selectedFile = event.target.files[0];
+    if(this.selectedFile !== null){
+      this.selectedFile = null
+    }
+    else{
+      this.selectedFile = event.target.files[0];
+    }
   }
 
   onAudioSubmit() {
