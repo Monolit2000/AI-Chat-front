@@ -5,13 +5,23 @@
     <div class="flex-1 p-4 overflow-y-auto flex-col-reverse " #responseContainer >
       <!-- Если есть сообщения -->
       <ng-container *ngIf="responses.length > 0">
-          <div
-            *ngFor="let response of responses "
-            class="bg-customBgForChat p-3 rounded-lg shadow mb-2 fade-in hover:bg-customGray duration-200 "
+        <div *ngFor="let response of responses">
+          <!-- Сообщение пользователя -->
+          <p
+            *ngIf="response.prompt !== null"
+            class="text-white bg-customBgForChat p-3 rounded-lg shadow mb-2 fade-in hover:bg-customGray duration-200 break-words max-w-[90%] ml-auto text-right overflow-hidden"
           >
-            <p class="text-white wrap-text">{{ response.conetent }}</p>
-          </div>
-        </ng-container>
+            {{ response.prompt }}
+          </p>
+  
+          <!-- Сообщение системы -->
+          <p
+            class="text-white bg-customBgForChat p-3 rounded-lg shadow mb-2 fade-in hover:bg-customGray duration-200 break-words max-w-[90%] overflow-hidden"
+          >
+            {{ response.conetent }}
+          </p>
+        </div>
+      </ng-container>
 
         <!-- Если сообщений нет -->
       <div 
@@ -43,43 +53,27 @@
         />
 
       <!-- Audio input -->
-<label class="flex items-center relative">
-  <input
-    type="file"
-    (change)="onFileSelected($event)"
-    class="hidden"
-  />
-  <span 
-    [ngClass]="{ 'bg-white text-black': selectedFile !== null }"
-    class="cursor-pointer px-3 py-2 bg-black text-white rounded-lg hover:bg-white hover:text-black focus:ring focus:ring-green-300 duration-200">
-    <i class="fa-solid fa-microphone-lines"></i>
-  </span>
-
-  <!-- Delete icon, appears when selectedFile is not null -->
-  <!-- <span 
-    *ngIf="selectedFile !== null"
-    (click)="onFileSelected($event)"
-    class="absolute top-0 left-0 flex items-center justify-center w-full h-full bg-white text-red-600 rounded-lg cursor-pointer hover:bg-red-100 hover:text-red-700 transition-all duration-300">
-    <i class="fa-solid fa-trash-alt"></i>
-  </span> -->
-</label>
+      <label class="flex items-center relative">
+        <input
+          type="file"
+          (change)="onFileSelected($event)"
+          class="hidden"
+        />
+        <span 
+          [ngClass]="{ 'bg-white text-black': selectedFile !== null }"
+          class="cursor-pointer px-3 py-2 bg-black text-white rounded-lg hover:bg-white hover:text-black focus:ring focus:ring-green-300 duration-200">
+          <i class="fa-solid fa-microphone-lines"></i>
+        </span>
+      </label>
 
         <!-- Submit button -->
         <button
           (click)="onAudioSubmit()"
-          class="px-4 py-2 bg-black text-white rounded-lg hover:bg-white hover:text-black duration-200"
-          [ngClass]="{' text-customBgForChat': selectedFile === null && promptText === ''}"
+          class="px-4 py-2 bg-black text-customBgForChat  rounded-lg hover:bg-white hover:text-black duration-200"
+          [ngClass]="{' text-white': selectedFile !== null || promptText !== ''}"
         >
         <i class="fa-solid fa-circle-arrow-up"></i>
         </button>
-
-        <!-- <button
-          *ngIf="selectedFile !== null"
-          (click)="onAudioSubmit()"
-          class="ml-2 px-4 py-2 bg-black text-white rounded-lg hover:bg-green-600 focus:ring focus:ring-green-300"
-        >
-          Send
-        </button> -->
       </div>
     </div>
   </div>

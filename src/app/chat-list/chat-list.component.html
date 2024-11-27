@@ -38,7 +38,7 @@
             />
       
           <!-- Action menu -->
-          <div class="relative" (click)="onActionMenuClick($event, chat)">
+          <div class="relative" (click)="onActionMenuClick($event, chat) ">
             <span 
               *ngIf="hoveredChatId === chat.chatId || selectedChat?.chatId === chat.chatId || actionMenuChatId === chat.chatId" 
               class="ml-2 text-gray-400 cursor-pointer text-center"
@@ -50,7 +50,7 @@
             </span>
             <ul 
               *ngIf="actionMenuChatId === chat.chatId"
-              class="absolute right-0 mt-4 w-48 bg-customGray rounded-xl shadow-lg z-10"
+              class="absolute right-0 mt-4 w-48 bg-customGray rounded-xl shadow-lg z-10 "
             >
 
               <li

@@ -176,6 +176,7 @@ export class ChatListComponent {
   deleteChat(chatId: string): void {
     this.chatService.deleteChat(chatId).subscribe({
       next: () => {
+        this.actionMenuChatId = null
         console.log('Chat deleted successfully');
 
         this.deletingChatId = chatId;
@@ -184,8 +185,8 @@ export class ChatListComponent {
         if (index === -1) {
           this.selectedChat = null;
           return;
-          
         }
+
 
         setTimeout(() => {
           this.chatDtos = this.chatDtos.filter(chat => chat.chatId !== chatId);
@@ -196,6 +197,13 @@ export class ChatListComponent {
             return;
           }
           
+
+          var chat = this.chatDtos.find(chat => chat.chatId === chatId);
+
+          if(chat === this.chatDtos[0]){
+            this.createChat()
+            return;
+          }
 
           const previousChat = this.chatDtos[index - 1] || this.chatDtos[0]; 
           if (previousChat && this.selectedChat.chatId === chatId) {

@@ -19,6 +19,7 @@ export class ChatComponent {
   loading = false;
   chatId = 'your-chat-id'; 
   promptText = '';
+  test = true;
   responses:  ChatResponse[] = []; 
   selectedFile: File | null = null;
 
