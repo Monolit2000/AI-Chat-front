@@ -33,9 +33,9 @@ export class ChatComponent {
 
   private shouldScroll = false;
 
-  onChatSelected(chatId: string) {
-    this.currentChatId = chatId;
-  }
+  // onChatSelected(chatId: string) {
+  //   this.currentChatId = chatId;
+  // }
 
 
   // ngOnChanges(changes: SimpleChanges) {
@@ -78,6 +78,13 @@ export class ChatComponent {
       console.log('Chat ID changed to:', changes['currentChatId'].currentValue);
       this.loading = true;
       this.chatId = changes['currentChatId'].currentValue;
+
+      if(this.chatId === 'n'){
+        this.responses = [];
+        this.loading = false;
+        return;
+      }
+
       this.chatService.getAllChatResponsesByChatId(this.currentChatId!).subscribe({
         next: (responses: ChatResponse[]) => {
           this.responses = responses; 

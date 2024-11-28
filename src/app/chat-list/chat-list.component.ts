@@ -197,6 +197,7 @@ export class ChatListComponent {
             return;
           }
           
+          
 
           var chat = this.chatDtos.find(chat => chat.chatId === chatId);
 
@@ -205,27 +206,33 @@ export class ChatListComponent {
             return;
           }
 
-          const previousChat = this.chatDtos[index - 1] || this.chatDtos[0]; 
-          if (previousChat && this.selectedChat.chatId === chatId) {
-            this.chatSelected.emit(previousChat.chatId);
-            this.selectedChat = previousChat;
-          } else {
-            // this.chatSelected.emit(null);
-            const firstChat = this.chatDtos[0];
-
-            if (firstChat) {
-              // Извлекаем ID первого чата, если он существует
-              const chatId = firstChat.chatId;
-
-              this.selectedChat = firstChat;
-      
-              // Эмитим событие с ID первого чата
-              this.chatSelected.emit(chatId);
-            } else {
-              console.warn('No chats found');
-            }
-
+          if(this.selectedChat?.chatId === chatId){
+            this.chatSelected.emit('n');
+            this.selectedChat = null;
+            return;
           }
+
+          // const previousChat = this.chatDtos[index - 1] || this.chatDtos[0]; 
+          // if (previousChat && this.selectedChat.chatId === chatId) {
+          //   this.chatSelected.emit(previousChat.chatId);
+          //   this.selectedChat = previousChat;
+          // } else {
+          //   // this.chatSelected.emit(null);
+          //   const firstChat = this.chatDtos[0];
+
+          //   if (firstChat) {
+          //     // Извлекаем ID первого чата, если он существует
+          //     const chatId = firstChat.chatId;
+
+          //     this.selectedChat = firstChat;
+      
+          //     // Эмитим событие с ID первого чата
+          //     this.chatSelected.emit(chatId);
+          //   } else {
+          //     console.warn('No chats found');
+          //   }
+
+          // }
         
       },
       error: (error) => {

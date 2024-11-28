@@ -25,7 +25,7 @@
 
         <!-- Если сообщений нет -->
       <div 
-        *ngIf="responses.length === 0" 
+        *ngIf="responses.length === 0 || chatId === 'n'" 
         class="flex items-center justify-center h-full text-gray-400 text-center rounded-lg p-4"
       >
         <p>Send your prompt and audio</p>
@@ -70,9 +70,14 @@
         <button
           (click)="onAudioSubmit()"
           class="px-4 py-2 bg-black text-customBgForChat  rounded-lg hover:bg-white hover:text-black duration-200"
-          [ngClass]="{' text-white': selectedFile !== null || promptText !== ''}"
+          [ngClass]="{' text-white': selectedFile !== null || promptText !== ''
+
+          }"
+          
         >
-        <i class="fa-solid fa-circle-arrow-up"></i>
+        <i 
+        class="fa-solid fa-circle-arrow-up"
+        [ngClass]="{'animate-spin': loading}"></i>
         </button>
       </div>
     </div>
