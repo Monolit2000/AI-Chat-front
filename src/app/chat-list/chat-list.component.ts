@@ -17,6 +17,7 @@ export class ChatListComponent {
 
   @Output() chatSelected = new EventEmitter<string>();
 
+
   @ViewChild('inputField', { static: false }) inputField: ElementRef | undefined;
   
   titel = "";
@@ -89,6 +90,10 @@ export class ChatListComponent {
     }, 1000); 
   }
 
+
+  selectNewChat(chatDto: ChatDto){
+    this.selectedChat = chatDto
+  }
 
 
   loadChats(): void {

@@ -1,8 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnChanges, SimpleChanges, ElementRef, ViewChild } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, Output, ElementRef, EventEmitter, ViewChild } from '@angular/core';
 import { ChatService } from '../services/chat-service.service';
 import { FormsModule } from '@angular/forms'; 
 import { ChatResponse } from '../chat/chat-response.model';
+import { ChatWithChatResponseDto } from './chat-with-chat-response-dto';
+import { ChatDto } from './chat-dto';
 
 @Component({
   selector: 'app-chat',
@@ -26,6 +28,8 @@ export class ChatComponent {
   constructor(private chatService: ChatService) {}
 
   @Input() currentChatId: string | null = null;
+
+  @Output() chatCreated = new EventEmitter<ChatDto>();
 
   // container = document.getElementById('responseContainer');
 
@@ -99,6 +103,36 @@ export class ChatComponent {
     }
   }
 
+  createChatWithChatResponse(){
+    if (this.selectedFile) 
+        this.loading = true;
+        this.chatService.createChatWithResponceChat(this.promptText, this.selectedFile).subscribe({
+        next: (response: ChatWithChatResponseDto) => {
+          console.log('Audio prompt sent successfully', response);
+          this.chatId = response.chatDto.chatId;
+
+          let chatResponse: ChatResponse ={
+            chatId : response.chatDto.chatId,
+            prompt: response.prompt,
+            conetent : response.conetent
+          }
+
+          this.responses.push(chatResponse); 
+          this.chatCreated.emit(response.chatDto);
+          this.selectedFile = null;
+          this.loading = false;
+          this.promptText = '';
+          this.scrollToBottom()
+        },
+        error: (error) => {
+          console.error('Error during the HTTP request:', error);
+          this.loading = false;
+        }
+      });
+}
+  
+
+
 
   onTextSubmit() {
     if (this.promptText.trim()) {
@@ -122,6 +156,12 @@ export class ChatComponent {
   }
 
   onAudioSubmit() {
+
+    if(this.responses.length === 0){
+      this.createChatWithChatResponse();
+      return;
+    }
+
     if (this.selectedFile) {
         this.loading = true;
         this.chatService.sendAudioPrompt(this.chatId, this.selectedFile, this.promptText).subscribe({

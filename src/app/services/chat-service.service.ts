@@ -5,6 +5,7 @@ import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import { ChatResponse } from '../chat/chat-response.model';
 import { ChatDto } from '../chat/chat-dto';
+import { ChatWithChatResponseDto } from '../chat/chat-with-chat-response-dto';
 
 @Injectable({
   providedIn: 'root' 
@@ -42,6 +43,24 @@ export class ChatService {
 
 
   
+  createChatWithResponceChat(prompt: string, file: File | null = null): Observable<ChatWithChatResponseDto> {
+    const formData = new FormData();
+    if(file !== null){
+      formData.append('audioFile', file);
+    }
+    formData.append('promt', prompt );
+
+    return this.http.post<ChatWithChatResponseDto>(`${this.apiUrl}/createChatWithChatResponse`, formData)
+    .pipe(
+      catchError((error) => {
+        console.error('Error during the HTTP request:', error);
+        return throwError(error);
+      })
+    )
+  }
+
+
+  
   deleteChat(chatId: string) {
     return this.http.post(`${this.apiUrl}/deleteChat`, {chatId: chatId})
       .pipe(
@@ -55,6 +74,22 @@ export class ChatService {
 
 
   createNewChat(): Observable<ChatDto> {
+    return this.http.post<ChatDto>(`${this.apiUrl}/createNewChat`, {})
+      .pipe(
+        catchError((error) => {
+          console.error('Error during creating a new chat:', error);
+          return throwError(error);
+        })
+      );
+  }
+
+
+
+
+
+
+
+  createNewWithResponceChat(chatId: string, file: File, prompt: string ): Observable<ChatDto> {
     return this.http.post<ChatDto>(`${this.apiUrl}/createNewChat`, {})
       .pipe(
         catchError((error) => {
