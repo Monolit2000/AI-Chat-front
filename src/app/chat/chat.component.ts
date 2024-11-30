@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { ChatResponse } from '../chat/chat-response.model';
 import { ChatWithChatResponseDto } from './chat-with-chat-response-dto';
 import { ChatDto } from './chat-dto';
+import { SharedService } from '../services/shared.service';
 
 @Component({
   selector: 'app-chat',
@@ -15,7 +16,6 @@ import { ChatDto } from './chat-dto';
 })
 export class ChatComponent {
 
-
  
 
   loading = false;
@@ -25,41 +25,21 @@ export class ChatComponent {
   responses:  ChatResponse[] = []; 
   selectedFile: File | null = null;
 
-  constructor(private chatService: ChatService) {}
+  constructor(
+    private chatService: ChatService,
+    private sharedService: SharedService) {}
 
   @Input() currentChatId: string | null = null;
 
   @Output() chatCreated = new EventEmitter<ChatDto>();
+  
+  
 
   // container = document.getElementById('responseContainer');
 
   @ViewChild('responseContainer') responseContainer!: ElementRef;
 
   private shouldScroll = false;
-
-  // onChatSelected(chatId: string) {
-  //   this.currentChatId = chatId;
-  // }
-
-
-  // ngOnChanges(changes: SimpleChanges) {
-  //   if (changes['currentChatId'] && changes['currentChatId'].currentValue) {
-  //     console.log('Chat ID changed to:', changes['currentChatId'].currentValue);
-     
-  //   }
-  // }
-
-
-  // private scrollToBottom() {
-  //   try {
-  //     this.responseContainer.nativeElement.scrollTo({
-  //       top: this.responseContainer.nativeElement.scrollHeight,
-  //       behavior: 'smooth',
-  //     });
-  //   } catch (err) {
-  //     console.error('Error while scrolling:', err);
-  //   }
-  // }
 
   private scrollToBottom(delay: number = 0) {
     try {
@@ -118,7 +98,12 @@ export class ChatComponent {
           }
 
           this.responses.push(chatResponse); 
-          this.chatCreated.emit(response.chatDto);
+
+          
+          //Test
+          this.sharedService.sendObject(response.chatDto)
+
+          // this.chatCreated.emit(response.chatDto);
           this.selectedFile = null;
           this.loading = false;
           this.promptText = '';

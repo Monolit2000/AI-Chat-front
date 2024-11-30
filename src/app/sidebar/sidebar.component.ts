@@ -14,7 +14,6 @@ import { ChatListComponent } from '../chat-list/chat-list.component';
 export class SidebarComponent {
   @Output() chatSelected = new EventEmitter<string>();
 
-
   @Output() chatCreated = new EventEmitter<string>();
 
   onNewChatCreated(chatId: string){
