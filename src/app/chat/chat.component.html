@@ -1,5 +1,5 @@
-<div class="scrol  bg-black " >
-  <div class="flex flex-col h-screen bg-customBgForChat rounded-l-3xl p-5">
+<div class="scrol bg-black py-5 pr-5">
+  <div class="flex flex-col h-[calc(100vh-40px)] bg-customBgForChat rounded-3xl overflow-hidden">
     <!-- Chat responses -->
     
     <div class="flex-1 p-4 overflow-y-auto flex-col-reverse " #responseContainer >
@@ -77,7 +77,7 @@
         >
         <i 
         class="fa-solid fa-circle-arrow-up"
-        [ngClass]="{'animate-spin': loading}"></i>
+        [ngClass]="{'animate-spin': spinloading}"></i>
         </button>
       </div>
     </div>

@@ -17,7 +17,7 @@ import { SharedService } from '../services/shared.service';
 export class ChatComponent {
 
  
-
+  spinloading = false;  
   loading = false;
   chatId = 'your-chat-id'; 
   promptText = '';
@@ -117,16 +117,23 @@ export class ChatComponent {
 }
   
 
-
-
   onTextSubmit() {
     if (this.promptText.trim()) {
-      this.chatService.sendTextPrompt(this.chatId, this.promptText).subscribe(
+
+      let prompt = this.promptText
+      this.promptText = '';
+      this.spinloading = true;
+      this.chatService.sendTextPrompt(this.chatId, prompt).subscribe(
         (response: ChatResponse) => {
+          this.spinloading = false;
           this.responses.push(response);
+          this.scrollToBottom(300);
           this.promptText = '';
         },
-        (error) => console.error('Error:', error)
+        (error) => {
+          this.spinloading = false;
+          console.error('Error:', error)
+        }
       );
     }
   }
@@ -169,6 +176,7 @@ export class ChatComponent {
       this.onTextSubmit();
       this.scrollToBottom();
       this.scrollToBottom(300);
+      this.scrollToBottom(1000);
     }
   }
 
