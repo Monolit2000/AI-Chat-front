@@ -127,7 +127,7 @@ export class ChatComponent {
         (response: ChatResponse) => {
           this.spinloading = false;
           this.responses.push(response);
-          this.scrollToBottom(300);
+          this.scrollToBottom();
           this.promptText = '';
         },
         (error) => {
