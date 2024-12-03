@@ -21,12 +21,21 @@
           (dblclick)="startEditing(chat.chatId)"
         >
           <!-- Chat title or input for renaming -->
-            <span 
+            <!-- <span 
               *ngIf="editingChatId !== chat.chatId" 
               class="truncate"
             >
               {{ chat.chatTitel }}
+            </span> -->
+
+
+            <span *ngIf="!chat.animatedTitle && editingChatId !== chat.chatId " class="truncateTitel">
+              {{ chat.chatTitel }}
             </span>
+            <span *ngIf="chat.animatedTitle && editingChatId !== chat.chatId" class="truncateTitel">
+              {{ chat.animatedTitle }}
+            </span>
+            
          
 
             <input

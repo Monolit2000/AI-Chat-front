@@ -6,6 +6,7 @@ import { throwError } from 'rxjs';
 import { ChatResponse } from '../chat/chat-response.model';
 import { ChatDto } from '../chat/chat-dto';
 import { ChatWithChatResponseDto } from '../chat/chat-with-chat-response-dto';
+import { ChatTitelDto } from '../chat/chat-titel-dto';
 
 @Injectable({
   providedIn: 'root' 
@@ -23,6 +24,12 @@ export class ChatService {
   renameChat(chatId: string, newChatTitel: string){
 
     return this.http.post<ChatResponse>(`${this.apiUrl}/renameChat`, { chatId: chatId ,newChatTitel: newChatTitel });
+  }
+
+
+  geneareteChatTitel(chatId: string, prompt: string):Observable<ChatTitelDto>{
+
+    return this.http.post<ChatTitelDto>(`${this.apiUrl}/geneareteChatTitel`, { chatId: chatId ,prompt: prompt });
   }
 
 

@@ -6,6 +6,7 @@ import { ChatResponse } from '../chat/chat-response.model';
 import { ChatWithChatResponseDto } from './chat-with-chat-response-dto';
 import { ChatDto } from './chat-dto';
 import { SharedService } from '../services/shared.service';
+import { ChatTitelDto } from './chat-titel-dto';
 
 @Component({
   selector: 'app-chat',
@@ -40,6 +41,23 @@ export class ChatComponent {
   @ViewChild('responseContainer') responseContainer!: ElementRef;
 
   private shouldScroll = false;
+
+
+
+
+  ngOnInit(): void {
+
+    this.sharedService.getData<string>('createChat').subscribe((data)  => {
+      this.responses = [];
+      this.loading = false;
+      return;
+    })
+  }
+
+
+
+
+
 
   private scrollToBottom(delay: number = 0) {
     try {
@@ -86,7 +104,10 @@ export class ChatComponent {
   createChatWithChatResponse(){
     if (this.selectedFile) 
         this.loading = true;
-        this.chatService.createChatWithResponceChat(this.promptText, this.selectedFile).subscribe({
+    let prompt = this.promptText
+    this.promptText = '';
+    this.spinloading = true;
+        this.chatService.createChatWithResponceChat(prompt, this.selectedFile).subscribe({
         next: (response: ChatWithChatResponseDto) => {
           console.log('Audio prompt sent successfully', response);
           this.chatId = response.chatDto.chatId;
@@ -97,6 +118,7 @@ export class ChatComponent {
             conetent : response.conetent
           }
 
+          this.spinloading = false;
           this.responses.push(chatResponse); 
 
           
@@ -108,6 +130,7 @@ export class ChatComponent {
           this.loading = false;
           this.promptText = '';
           this.scrollToBottom()
+          this.geneareteChatTitel(response.chatDto.chatId, response.prompt);
         },
         error: (error) => {
           console.error('Error during the HTTP request:', error);
@@ -129,6 +152,7 @@ export class ChatComponent {
           this.responses.push(response);
           this.scrollToBottom();
           this.promptText = '';
+          // this.geneareteChatTitel(response.chatId, response.prompt);
         },
         (error) => {
           this.spinloading = false;
@@ -137,6 +161,20 @@ export class ChatComponent {
       );
     }
   }
+
+
+  geneareteChatTitel(chatId: string, prompt: string){
+    this.chatService.geneareteChatTitel(chatId, prompt).subscribe(
+      (chatTitel: ChatTitelDto) => {
+        this.sharedService.sendData<ChatTitelDto>('ChatTitelDto',chatTitel);
+      },
+      (error) => {
+        console.error('GeneareteChatTitel:', error)
+      }
+    );
+  }
+
+
 
   onFileSelected(event: any) {
     if(this.selectedFile !== null){

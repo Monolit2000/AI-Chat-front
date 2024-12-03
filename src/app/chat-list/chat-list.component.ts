@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ChatService } from '../services/chat-service.service';
 import { ChatDto } from '../chat/chat-dto';
 import { SharedService } from '../services/shared.service';
+import { ChatTitelDto } from '../chat/chat-titel-dto';
 
 
 @Component({
@@ -36,9 +37,37 @@ export class ChatListComponent {
     this.sharedService.object$.subscribe((object) => {
       this.handleReceivedObject(object); // Вызов метода при получении объекта
     });
+
+    this.sharedService.getData<ChatTitelDto>('ChatTitelDto').subscribe((data)  => {
+      this.handleReceivedChatTitelDto(data);
+    })
+  }
+
+  handleReceivedChatTitelDto(chatTitelDto: ChatTitelDto) {
+    console.log('Объект получен:', chatTitelDto);
+    const chat = this.chatDtos.find(i => i.chatId === chatTitelDto.chatId);
+    if (chat) {
+      const newTitle = chatTitelDto.newTitel;
+      chat.animatedTitle = ''; // Очищаем перед началом анимации
+  
+      let index = 0;
+      const interval = setInterval(() => {
+        if (index < newTitle.length) {
+          chat.animatedTitle += newTitle[index];
+          index++;
+        } else {
+          clearInterval(interval);
+          chat.chatTitel = newTitle; // Устанавливаем окончательное название
+          chat.animatedTitle = undefined; // Удаляем временное поле
+        }
+      }, 100); // Интервал между добавлением символов (100 мс)
+    } else {
+      console.warn(`Чат с chatId=${chatTitelDto.chatId} не найден.`);
+    }
   }
 
 
+  
 
 
 
@@ -150,17 +179,23 @@ export class ChatListComponent {
 
 
   createChat(): void {
-    this.chatService.createNewChat().subscribe({
-      next: (response) => {
-        console.log('Chat created successfully:', response);
-        this.chatDtos.unshift(response);
-        this.chatSelected.emit(response.chatId);
-        this.selectedChat = response;
-      },
-      error: (error) => {
-        console.error('Error creating chat:', error);
-      },
-    });
+
+    this.chatSelected.emit('n');
+    this.selectedChat = null;
+
+    this.sharedService.sendData<string>('createChat', 'createChat')
+
+    // this.chatService.createNewChat().subscribe({
+    //   next: (response) => {
+    //     console.log('Chat created successfully:', response);
+    //     this.chatDtos.unshift(response);
+    //     this.chatSelected.emit(response.chatId);
+    //     this.selectedChat = response;
+    //   },
+    //   error: (error) => {
+    //     console.error('Error creating chat:', error);
+    //   },
+    // });
   }
 
 
