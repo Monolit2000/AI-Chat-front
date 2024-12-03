@@ -174,9 +174,6 @@ export class ChatComponent {
     }
     else if(this.selectedFile === null && this.promptText !== ''){
       this.onTextSubmit();
-      this.scrollToBottom();
-      this.scrollToBottom(300);
-      this.scrollToBottom(1000);
     }
   }
 
