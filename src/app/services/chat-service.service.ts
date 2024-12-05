@@ -16,6 +16,64 @@ export class ChatService {
 
   constructor(private http: HttpClient) {}
 
+
+
+  // Метод для стриминга через SSE
+  streamChatResponses(chatId: string, promt: string): Observable<ChatResponse> {
+    // const url = `${this.apiUrl}/createStreamingChatResponseOnText?chatId=${encodeURIComponent(chatId)}&promt=${encodeURIComponent(promt)}`;
+    return new Observable<ChatResponse>((observer) => {
+      const eventSource = new EventSource(`${this.apiUrl}/createStreamingChatResponseOnText?chatId=${encodeURIComponent(chatId)}&promt=${encodeURIComponent(promt)}`);
+
+      eventSource.onmessage = (event) => {
+        const chat: ChatResponse = JSON.parse(event.data); 
+        observer.next(chat); // Отправляем данные подписчику
+      };
+
+      eventSource.onerror = (error) => {
+        console.error('EventSource error:', error);
+        eventSource.close();
+        observer.error(error); // Уведомляем об ошибке
+      };
+
+      // Возвращаем функцию для закрытия соединения
+      return () => {
+        eventSource.close();
+        console.log('EventSource connection closed');
+      };
+    });
+  }
+
+   /**
+   * Универсальный метод для стриминга данных через SSE.
+   * @param endpoint - Относительный путь к SSE-эндпоинту
+   * @returns Observable<T> - Поток данных указанного типа
+   */
+   streamChatResponsesGeneric<T>(endpoint: string): Observable<T> {
+    return new Observable<T>((observer) => {
+      const eventSource = new EventSource(`${this.apiUrl}/${endpoint}`);
+
+      eventSource.onmessage = (event) => {
+        const data: T = JSON.parse(event.data); // Парсим данные как указанный тип
+        observer.next(data);
+      };
+
+      eventSource.onerror = (error) => {
+        console.error('EventSource error:', error);
+        eventSource.close();
+        observer.error(error);
+      };
+
+      // Функция для завершения соединения
+      return () => {
+        eventSource.close();
+        console.log('EventSource connection closed');
+      };
+    });
+  }
+
+
+
+
   sendTextPrompt(chatId: string, promt: string): Observable<ChatResponse> {
 
     return this.http.post<ChatResponse>(`${this.apiUrl}/createChatResponseOnText`, { chatId: chatId ,promt: promt });

@@ -120,7 +120,7 @@ export class ChatComponent {
   createChatWithChatResponse(){
     if (this.selectedFile) 
         this.loading = true;
-    let prompt = this.currentMode !== 'Test' ? '@' + this.promptText.trim() : this.promptText;
+    let prompt = this.currentMode !== this.testMoode ? '@' + this.promptText.trim() : this.promptText;
     this.promptText = '';
     this.spinloading = true;
         this.chatService.createChatWithResponceChat(prompt, this.selectedFile).subscribe({
@@ -159,7 +159,7 @@ export class ChatComponent {
   onTextSubmit() {
     if (this.promptText.trim()) {
 
-      let prompt = this.currentMode !== 'Test' ? '@' + this.promptText.trim() : this.promptText;
+      let prompt = this.currentMode !== this.testMoode ? '@' + this.promptText.trim() : this.promptText;
       this.promptText = '';
       this.spinloading = true;
 

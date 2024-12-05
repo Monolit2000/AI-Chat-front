@@ -1,11 +1,10 @@
-import { Component, EventEmitter, Output, HostListener,ViewChild, ElementRef  } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; 
-import { ChatService } from '../services/chat-service.service';
 import { ChatDto } from '../chat/chat-dto';
-import { SharedService } from '../services/shared.service';
+import { FormsModule } from '@angular/forms'; 
+import { CommonModule } from '@angular/common';
 import { ChatTitelDto } from '../chat/chat-titel-dto';
-
+import { SharedService } from '../services/shared.service';
+import { ChatService } from '../services/chat-service.service';
+import { Component, EventEmitter, Output, HostListener,ViewChild, ElementRef  } from '@angular/core';
 
 @Component({
   selector: 'app-chat-list',
@@ -65,10 +64,6 @@ export class ChatListComponent {
       console.warn(`Чат с chatId=${chatTitelDto.chatId} не найден.`);
     }
   }
-
-
-  
-
 
 
   handleReceivedObject(object: ChatDto) {
