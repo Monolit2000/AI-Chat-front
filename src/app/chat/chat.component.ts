@@ -136,9 +136,9 @@ export class ChatComponent {
           }
 
           this.spinloading = false;
-          this.responses.push(chatResponse); 
 
-          
+          this.responses.push(chatResponse); 
+          // this.hendleStreameResponce(chatResponse);
           //Test
           this.sharedService.sendObject(response.chatDto)
 
@@ -153,9 +153,10 @@ export class ChatComponent {
           console.error('Error during the HTTP request:', error);
           this.loading = false;
         }
+       
       });
+      this.currentResponseHandle = false;
 }
-currentResponseHandle = false;
 
   onTextSubmit() {
     if (this.promptText.trim()) {
@@ -165,25 +166,27 @@ currentResponseHandle = false;
       this.spinloading = true;
 
       var index: number
+      var currentResponseHandle = false;
 
       this.chatService.streamChatResponses(this.chatId, prompt).subscribe(
         (response: ChatResponse) => {
           this.spinloading = false;
 
-          if (this.currentResponseHandle === false) {
-            this.responses.push(response);
-            index = this.responses.findIndex(r => r === response);
-            this.currentResponseHandle = true;
-            this.scrollToBottom();
-          } else {
+          this.hendleStreameResponce(response);
 
-            if (index !== -1) {
-              this.responses[index].conetent += response.conetent;
-            }
-          }
-          this.cdr.detectChanges();
+          // if (currentResponseHandle === false) {
+          //   this.responses.push(response);
+          //   index = this.responses.findIndex(r => r === response);
+          //   currentResponseHandle = true;
+          //   this.scrollToBottom();
+          // } else {
+
+          //   if (index !== -1) {
+          //     this.responses[index].conetent += response.conetent;
+          //   }
+          // }
+          // this.cdr.detectChanges();
          
-          this.promptText = '';
           // this.geneareteChatTitel(response.chatId, response.prompt);
 
         },
@@ -193,7 +196,25 @@ currentResponseHandle = false;
         }
       );
     }
-    this.currentResponseHandle = false
+    this.currentResponseHandle = false;
+  }
+
+
+  currentResponseHandle = false
+  index: number = -1
+  hendleStreameResponce(response: ChatResponse){
+    if (this.currentResponseHandle === false) {
+      this.responses.push(response);
+      this.index = this.responses.findIndex(r => r === response);
+      this.currentResponseHandle = true;
+      this.scrollToBottom();
+    } else {
+
+      if (this.index !== -1) {
+        this.responses[this.index].conetent += response.conetent;
+      }
+    }
+    this.cdr.detectChanges();
   }
 
 
@@ -207,7 +228,6 @@ currentResponseHandle = false;
       }
     );
   }
-
 
 
   onFileSelected(event: any) {

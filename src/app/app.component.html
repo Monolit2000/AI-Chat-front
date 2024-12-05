@@ -1,12 +1,3 @@
-
-<div>
-    <button (click)="startStreaming()">Start Streaming</button>
-</div>
-  
-  <div *ngFor="let chat of texts">
-    <p>{{ chat }}</p>
-  </div>
-
 <div class="flex h-screen">
     <app-sidebar (chatSelected)="onChatSelected($event)"></app-sidebar>
     <app-chat class="flex-1" [currentChatId]="selectedChatId"></app-chat>
