@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnChanges, SimpleChanges, Output, ElementRef, EventEmitter, ViewChild } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, Output, ElementRef, EventEmitter, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { ChatService } from '../services/chat-service.service';
 import { FormsModule } from '@angular/forms'; 
 import { ChatResponse } from '../chat/chat-response.model';
@@ -29,7 +29,8 @@ export class ChatComponent {
 
   constructor(
     private chatService: ChatService,
-    private sharedService: SharedService) {}
+    private sharedService: SharedService,
+    private cdr: ChangeDetectorRef) {}
 
   @Input() currentChatId: string | null = null;
 
@@ -154,7 +155,7 @@ export class ChatComponent {
         }
       });
 }
-  
+currentResponseHandle = false;
 
   onTextSubmit() {
     if (this.promptText.trim()) {
@@ -163,15 +164,28 @@ export class ChatComponent {
       this.promptText = '';
       this.spinloading = true;
 
+      var index: number
 
-
-      this.chatService.sendTextPrompt(this.chatId, prompt).subscribe(
+      this.chatService.streamChatResponses(this.chatId, prompt).subscribe(
         (response: ChatResponse) => {
           this.spinloading = false;
-          this.responses.push(response);
-          this.scrollToBottom();
+
+          if (this.currentResponseHandle === false) {
+            this.responses.push(response);
+            index = this.responses.findIndex(r => r === response);
+            this.currentResponseHandle = true;
+            this.scrollToBottom();
+          } else {
+
+            if (index !== -1) {
+              this.responses[index].conetent += response.conetent;
+            }
+          }
+          this.cdr.detectChanges();
+         
           this.promptText = '';
           // this.geneareteChatTitel(response.chatId, response.prompt);
+
         },
         (error) => {
           this.spinloading = false;
@@ -179,6 +193,7 @@ export class ChatComponent {
         }
       );
     }
+    this.currentResponseHandle = false
   }
 
 
