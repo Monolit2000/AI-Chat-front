@@ -7,6 +7,7 @@ import { ChatWithChatResponseDto } from './chat-with-chat-response-dto';
 import { ChatDto } from './chat-dto';
 import { SharedService } from '../services/shared.service';
 import { ChatTitelDto } from './chat-titel-dto';
+import { TitleStrategy } from '@angular/router';
 
 @Component({
   selector: 'app-chat',
@@ -42,7 +43,22 @@ export class ChatComponent {
 
   private shouldScroll = false;
 
+  testMoode = 'Test mode';
+  aIMoode = 'AI mode';
+  currentMode: string = this.testMoode;
 
+  isTestMode = false;
+
+  setMode(mode: string): void {
+    this.currentMode = mode;
+
+    if(this.isTestMode === true){
+      this.isTestMode = false
+    } else {
+      this.isTestMode = true
+    }
+  }
+ 
 
 
   ngOnInit(): void {
@@ -104,7 +120,7 @@ export class ChatComponent {
   createChatWithChatResponse(){
     if (this.selectedFile) 
         this.loading = true;
-    let prompt = this.promptText
+    let prompt = this.currentMode !== 'Test' ? '@' + this.promptText.trim() : this.promptText;
     this.promptText = '';
     this.spinloading = true;
         this.chatService.createChatWithResponceChat(prompt, this.selectedFile).subscribe({
@@ -143,9 +159,12 @@ export class ChatComponent {
   onTextSubmit() {
     if (this.promptText.trim()) {
 
-      let prompt = this.promptText
+      let prompt = this.currentMode !== 'Test' ? '@' + this.promptText.trim() : this.promptText;
       this.promptText = '';
       this.spinloading = true;
+
+
+
       this.chatService.sendTextPrompt(this.chatId, prompt).subscribe(
         (response: ChatResponse) => {
           this.spinloading = false;

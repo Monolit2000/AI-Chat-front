@@ -60,7 +60,7 @@ export class ChatListComponent {
           chat.chatTitel = newTitle; // Устанавливаем окончательное название
           chat.animatedTitle = undefined; // Удаляем временное поле
         }
-      }, 100); // Интервал между добавлением символов (100 мс)
+      }, 75); // Интервал между добавлением символов (75 мс)
     } else {
       console.warn(`Чат с chatId=${chatTitelDto.chatId} не найден.`);
     }
