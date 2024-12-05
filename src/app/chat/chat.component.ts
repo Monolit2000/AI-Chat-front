@@ -231,8 +231,8 @@ export class ChatComponent {
 
   geneareteChatTitel(chatId: string, prompt: string){
     this.chatService.geneareteChatTitel(chatId, prompt).subscribe(
-      (chatTitel: ChatTitelDto) => {
-        this.sharedService.sendData<ChatTitelDto>('ChatTitelDto',chatTitel);
+      (chatTitelDto: ChatTitelDto) => {
+        this.sharedService.sendData<ChatTitelDto>('ChatTitelDto',chatTitelDto);
       },
       (error) => {
         console.error('GeneareteChatTitel:', error)
