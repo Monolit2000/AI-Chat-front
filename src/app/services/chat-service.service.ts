@@ -7,6 +7,9 @@ import { ChatResponse } from '../chat/chat-response.model';
 import { ChatDto } from '../chat/chat-dto';
 import { ChatWithChatResponseDto } from '../chat/chat-with-chat-response-dto';
 import { ChatTitelDto } from '../chat/chat-titel-dto';
+import { EventSourcePolyfill } from 'event-source-polyfill';
+
+
 
 @Injectable({
   providedIn: 'root' 
@@ -15,7 +18,6 @@ export class ChatService {
   private apiUrl = 'http://localhost:5000/AudioProcessing'; 
 
   constructor(private http: HttpClient) {}
-
 
 
   // Метод для стриминга через SSE
@@ -42,6 +44,84 @@ export class ChatService {
       };
     });
   }
+
+
+  streamChatResponsesPost<T>(url: string, formData: FormData): Observable<T> {
+    return new Observable<T>((observer) => {
+      const controller = new AbortController(); // Для управления запросом (например, отмены)
+      const signal = controller.signal;
+  
+      // Отправляем POST-запрос
+      fetch(url, {
+        method: 'POST',
+        body: formData,
+        signal,
+        headers: {
+          'Accept': 'text/event-stream',
+        },
+      })
+        .then((response) => {
+          if (!response.body) {
+            throw new Error('ReadableStream not supported!');
+          }
+  
+          // Читаем поток данных
+          const reader = response.body.getReader();
+          const decoder = new TextDecoder('utf-8');
+  
+          // Функция для обработки данных из потока
+          const read = () => {
+            reader.read().then(({ done, value }) => {
+              if (done) {
+                observer.complete(); // Завершаем Observable, когда поток завершен
+                return;
+              }
+  
+              const chunk = decoder.decode(value, { stream: true });
+              const lines = chunk.split('\n\n'); // Разделяем события по SSE-протоколу
+  
+              for (const line of lines) {
+                if (line.startsWith('data:')) {
+                  const json = line.replace('data:', '').trim();
+                  const data: T = JSON.parse(json); // Парсим данные
+                  observer.next(data); // Передаем данные подписчику
+                }
+              }
+  
+              read(); // Читаем следующую часть
+            }).catch((error) => {
+              observer.error(error);
+            });
+          };
+  
+          read(); // Начинаем чтение
+        })
+        .catch((error) => {
+          observer.error(error);
+        });
+  
+      // Возвращаем функцию для отмены запроса
+      return () => {
+        controller.abort();
+        console.log('SSE POST connection aborted');
+      };
+    });
+  }
+
+
+  createStreamingChatWithChatResponse(prompt: string, audioFile: File | null = null): Observable<ChatWithChatResponseDto> {
+    const formData = new FormData();
+    formData.append('promt', prompt);
+    if (audioFile) {
+      formData.append('audioFile', audioFile);
+    }
+  
+    const url = `${this.apiUrl}/createStreamingChatWithChatResponse`;
+  
+    return this.streamChatResponsesPost<ChatWithChatResponseDto>(url, formData);
+  }
+  
+
 
    /**
    * Универсальный метод для стриминга данных через SSE.
@@ -151,9 +231,6 @@ export class ChatService {
 
 
 
-
-
-
   createNewWithResponceChat(chatId: string, file: File, prompt: string ): Observable<ChatDto> {
     return this.http.post<ChatDto>(`${this.apiUrl}/createNewChat`, {})
       .pipe(
@@ -195,58 +272,6 @@ export class ChatService {
   }
 
 
-
-
-
 }
 
 
-
-
-
-
-
-// import { Injectable } from '@angular/core';
-// import { HttpClient } from '@angular/common/http';
-// import { Observable } from 'rxjs';
-// import { ChatResponse } from '../chat/chat-response.model';
-// import { catchError } from 'rxjs/operators';
-// import { throwError } from 'rxjs';
-
-// @Injectable({
-//   providedIn: 'root' 
-// })
-// export class ChatService {
-//   private apiUrl = 'http://localhost:5000/AudioProcessing'; 
-
-//   constructor(private http: HttpClient) {}
-
-//   sendTextPrompt(chatId: string, prompt: string): Observable<ChatResponse> {
-//     return this.http.post<ChatResponse>(`${this.apiUrl}/text`, { chatId, prompt });
-//   }
-
-//   sendAudioPrompt(chatId: string, file: File, prompt: string): Observable<ChatResponse> {
-//     const formData = new FormData();
-//     formData.append('audioFile', file);
-//     // formData.append('chatId', chatId);
-//     // formData.append('prompt', prompt);
-
-//     return this.http.post<ChatResponse>(`${this.apiUrl}/CreateChatWithTranscription`, formData)
-//     .pipe(
-//       catchError((error) => {
-//         console.error('Error during the HTTP request:', error);
-//         return throwError(error);
-//       })
-//     )
-//   }
-
-//   createNewChat(): Observable<any> {
-//     return this.http.post(`${this.apiUrl}/CreateChat`, {})
-//       .pipe(
-//         catchError((error) => {
-//           console.error('Error during creating a new chat:', error);
-//           return throwError(error);
-//         })
-//       );
-//   }
-// }

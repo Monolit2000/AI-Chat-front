@@ -61,7 +61,6 @@ export class ChatComponent {
   }
  
 
-
   ngOnInit(): void {
 
     this.sharedService.getData<string>('createChat').subscribe((data)  => {
@@ -70,10 +69,6 @@ export class ChatComponent {
       return;
     })
   }
-
-
-
-
 
 
   private scrollToBottom(delay: number = 0) {
@@ -124,7 +119,7 @@ export class ChatComponent {
     let prompt = this.currentMode !== this.testMoode ? '@' + this.promptText.trim() : this.promptText;
     this.promptText = '';
     this.spinloading = true;
-        this.chatService.createChatWithResponceChat(prompt, this.selectedFile).subscribe({
+        this.chatService.createStreamingChatWithChatResponse(prompt, this.selectedFile).subscribe({
         next: (response: ChatWithChatResponseDto) => {
           console.log('Audio prompt sent successfully', response);
           this.chatId = response.chatDto.chatId;
@@ -137,17 +132,33 @@ export class ChatComponent {
 
           this.spinloading = false;
 
-          this.responses.push(chatResponse); 
+          // this.responses.push(chatResponse); 
           // this.hendleStreameResponce(chatResponse);
-          //Test
-          this.sharedService.sendObject(response.chatDto)
+
+          if (this.currentResponseHandle === false) {
+            this.responses.push(chatResponse);
+            this.index = this.responses.findIndex(r => r === chatResponse);
+            this.currentResponseHandle = true;
+            this.scrollToBottom();
+
+            this.sharedService.sendObject(response.chatDto)
+            this.geneareteChatTitel(response.chatDto.chatId, response.prompt);
+          } else {
+      
+            if (this.index !== -1) {
+              this.responses[this.index].conetent += response.conetent;
+            }
+          }
+          this.cdr.detectChanges();
+
+          
 
           // this.chatCreated.emit(response.chatDto);
           this.selectedFile = null;
           this.loading = false;
           this.promptText = '';
           this.scrollToBottom()
-          this.geneareteChatTitel(response.chatDto.chatId, response.prompt);
+          
         },
         error: (error) => {
           console.error('Error during the HTTP request:', error);
