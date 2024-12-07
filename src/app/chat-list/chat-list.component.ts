@@ -27,7 +27,8 @@ export class ChatListComponent {
   selectedChat: ChatDto | null = null;
   hoveredChatId: string | null = null;
   actionMenuChatId: string | null = null;
-
+  editingChatId: string | null = null;
+  oldChatTitle: string | null = null;
   chatDtos: ChatDto[] = [];
 
   ngOnInit(): void {
@@ -73,11 +74,6 @@ export class ChatListComponent {
     this.selectedChat = object
   }
 
-
-  editingChatId: string | null = null;
-
-  oldChatTitle: string | null = null;
-
   startEditing(chatId: string): void {
     if(this.editingChatId === chatId){
       this.editingChatId = null
@@ -97,6 +93,7 @@ export class ChatListComponent {
       }, 0);
     }
   }
+
 
   stopEditing(chat: ChatDto): void {
     this.editingChatId = null;
@@ -124,7 +121,6 @@ export class ChatListComponent {
 
   deleteChatV2(chatId: string) {
     this.deletingChatId = chatId;
-
     // Задержка перед удалением, чтобы анимация успела пройти
     setTimeout(() => {
       this.chatDtos = this.chatDtos.filter(chat => chat.chatId !== chatId);
@@ -174,23 +170,9 @@ export class ChatListComponent {
 
 
   createChat(): void {
-
     this.chatSelected.emit('n');
     this.selectedChat = null;
-
     this.sharedService.sendData<string>('createChat', 'createChat')
-
-    // this.chatService.createNewChat().subscribe({
-    //   next: (response) => {
-    //     console.log('Chat created successfully:', response);
-    //     this.chatDtos.unshift(response);
-    //     this.chatSelected.emit(response.chatId);
-    //     this.selectedChat = response;
-    //   },
-    //   error: (error) => {
-    //     console.error('Error creating chat:', error);
-    //   },
-    // });
   }
 
 

@@ -1,13 +1,13 @@
-import { CommonModule } from '@angular/common';
-import { Component, Input, SimpleChanges, Output, ElementRef, EventEmitter, ViewChild, ChangeDetectorRef } from '@angular/core';
-import { ChatService } from '../services/chat-service.service';
-import { FormsModule } from '@angular/forms'; 
-import { ChatResponse } from '../chat/chat-response.model';
-import { ChatWithChatResponseDto } from './chat-with-chat-response-dto';
-import { ChatDto } from './chat-dto';
-import { SharedService } from '../services/shared.service';
-import { ChatTitelDto } from './chat-titel-dto';
 import { Subscription } from 'rxjs';
+import { ChatDto } from './chat-dto';
+import { FormsModule } from '@angular/forms'; 
+import { CommonModule } from '@angular/common';
+import { ChatTitelDto } from './chat-titel-dto';
+import { SharedService } from '../services/shared.service';
+import { ChatResponse } from '../chat/chat-response.model';
+import { ChatService } from '../services/chat-service.service';
+import { ChatWithChatResponseDto } from './chat-with-chat-response-dto';
+import { Component, Input, SimpleChanges, Output, ElementRef, EventEmitter, ViewChild, ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-chat',
@@ -17,7 +17,6 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./chat.component.scss']
 })
 export class ChatComponent {
-
  
   loading = false;
   chatId = 'your-chat-id'; 
@@ -25,6 +24,15 @@ export class ChatComponent {
   test = true;
   responses:  ChatResponse[] = []; 
   selectedFile: File | null = null;
+  currentSubscription: Subscription | null = null;
+  testMoode = 'Generate text';
+  aIMoode = 'AI chat';
+  currentResponseHandle = false
+  index: number = -1
+
+  currentMode: string = this.testMoode;
+ 
+  generationLoading = false;
 
   constructor(
     private chatService: ChatService,
@@ -37,35 +45,17 @@ export class ChatComponent {
 
   @ViewChild('responseContainer') responseContainer!: ElementRef;
 
-  private shouldScroll = false;
-
-  testMoode = 'Generate text';
-  aIMoode = 'AI chat';
-
-  currentMode: string = this.testMoode;
-  isTestMode = false;
-  generationLoading = false;
-
   setMode(mode: string): void {
     this.currentMode = mode;
-
-    if(this.isTestMode === true){
-      this.isTestMode = false
-    } else {
-      this.isTestMode = true
-    }
   }
- 
 
   ngOnInit(): void {
-
     this.sharedService.getData<string>('createChat').subscribe((data)  => {
       this.responses = [];
       this.loading = false;
       return;
     })
   }
-
 
   private scrollToBottom(delay: number = 0) {
     try {
@@ -80,7 +70,6 @@ export class ChatComponent {
       console.error('Error while scrolling:', err);
     }
   }
-  
 
 
   ngOnChanges(changes: SimpleChanges) {
@@ -108,9 +97,6 @@ export class ChatComponent {
       });
     }
   }
-
-
-  currentSubscription: Subscription | null = null;
 
   cancelChatResponse() {
     if (this.currentSubscription) {
@@ -182,16 +168,13 @@ export class ChatComponent {
 
   onTextSubmit() {
     if (this.promptText.trim()) {
-
       let prompt = this.currentMode !== this.testMoode ? '@' + this.promptText.trim() : this.promptText;
       this.promptText = '';
       this.generationLoading = true;
 
       this.currentSubscription = this.chatService.streamChatResponses(this.chatId, prompt).subscribe({
         next: (response: ChatResponse) => {
-
           this.hendleStreameResponce(response);
-
         },
         error: (error) => {
           this.generationLoading = false;
@@ -205,17 +188,11 @@ export class ChatComponent {
           this.cdr.detectChanges();
         }
      });
-    
     }
-   
-      // this.generationLoading = false;
       this.currentResponseHandle = false;
-
   }
 
 
-  currentResponseHandle = false
-  index: number = -1
   hendleStreameResponce(response: ChatResponse){
     if (this.currentResponseHandle === false) {
       this.responses.push(response);
@@ -255,7 +232,6 @@ export class ChatComponent {
   }
 
   onAudioSubmit() {
-
     if(this.responses.length === 0){
       this.createChatWithChatResponse();
       return;
@@ -283,8 +259,4 @@ export class ChatComponent {
       this.onTextSubmit();
     }
   }
-
 }
-
-
-
