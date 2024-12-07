@@ -89,16 +89,12 @@ export class ChatService {
               }
   
               read(); // Читаем следующую часть
-            }).catch((error) => {
-              observer.error(error);
-            });
+            }).catch((error) => observer.error(error));
           };
   
           read(); // Начинаем чтение
         })
-        .catch((error) => {
-          observer.error(error);
-        });
+        .catch((error) => observer.error(error));
   
       // Возвращаем функцию для отмены запроса
       return () => {

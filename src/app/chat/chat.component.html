@@ -96,15 +96,18 @@
 
         <!-- Submit button -->
         <button
-          (click)="onAudioSubmit()"
-          class="px-4 py-2 bg-black text-customBgForChat  rounded-lg hover:bg-white hover:text-black duration-200"
-          [ngClass]="{' text-white': selectedFile !== null || promptText !== ''}"
-        >
-        <i 
-        class="fa-solid fa-circle-arrow-up"
-        [ngClass]="{'animate-spin': spinloading}"></i>
-        </button>
+        (click)="generationLoading ? cancelChatResponse() : onAudioSubmit()"
+        class="px-4 py-2 bg-black text-customBgForChat rounded-lg hover:bg-white hover:text-black duration-200"
+        [ngClass]="{'text-white': selectedFile !== null || promptText !== '' || generationLoading === true }"
+      >
+        <i *ngIf="generationLoading === false" class="fa-solid fa-circle-arrow-up"></i>
+        <i *ngIf="generationLoading === true" class="fa-solid fa-stop  "></i>
+      </button>
+
       </div>
     </div>
   </div>
 </div>
+
+
+

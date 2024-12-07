@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnChanges, SimpleChanges, Output, ElementRef, EventEmitter, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, SimpleChanges, Output, ElementRef, EventEmitter, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { ChatService } from '../services/chat-service.service';
 import { FormsModule } from '@angular/forms'; 
 import { ChatResponse } from '../chat/chat-response.model';
@@ -7,7 +7,7 @@ import { ChatWithChatResponseDto } from './chat-with-chat-response-dto';
 import { ChatDto } from './chat-dto';
 import { SharedService } from '../services/shared.service';
 import { ChatTitelDto } from './chat-titel-dto';
-import { TitleStrategy } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-chat',
@@ -19,7 +19,6 @@ import { TitleStrategy } from '@angular/router';
 export class ChatComponent {
 
  
-  spinloading = false;  
   loading = false;
   chatId = 'your-chat-id'; 
   promptText = '';
@@ -35,20 +34,17 @@ export class ChatComponent {
   @Input() currentChatId: string | null = null;
 
   @Output() chatCreated = new EventEmitter<ChatDto>();
-  
-  
-
-  // container = document.getElementById('responseContainer');
 
   @ViewChild('responseContainer') responseContainer!: ElementRef;
 
   private shouldScroll = false;
 
-  testMoode = 'Test mode';
-  aIMoode = 'AI mode';
-  currentMode: string = this.testMoode;
+  testMoode = 'Generate text';
+  aIMoode = 'AI chat';
 
+  currentMode: string = this.testMoode;
   isTestMode = false;
+  generationLoading = false;
 
   setMode(mode: string): void {
     this.currentMode = mode;
@@ -113,58 +109,73 @@ export class ChatComponent {
     }
   }
 
+
+  currentSubscription: Subscription | null = null;
+
+  cancelChatResponse() {
+    if (this.currentSubscription) {
+      this.currentSubscription.unsubscribe();
+      this.currentSubscription = null;
+      console.log('Streaming canceled');
+      this.generationLoading = false;
+    }else{
+      console.log('Streaming canceleddfsagdfagfsdgsfgedfgdsfgds');
+      this.generationLoading = false;
+    }
+  }
+
   createChatWithChatResponse(){
     if (this.selectedFile) 
         this.loading = true;
-    let prompt = this.currentMode !== this.testMoode ? '@' + this.promptText.trim() : this.promptText;
-    this.promptText = '';
-    this.spinloading = true;
-        this.chatService.createStreamingChatWithChatResponse(prompt, this.selectedFile).subscribe({
-        next: (response: ChatWithChatResponseDto) => {
-          console.log('Audio prompt sent successfully', response);
-          this.chatId = response.chatDto.chatId;
+        let prompt = this.currentMode !== this.testMoode ? '@' + this.promptText.trim() : this.promptText;
+        this.promptText = '';
+        this.generationLoading = true;
+        this.currentSubscription = this.chatService.createStreamingChatWithChatResponse(prompt, this.selectedFile).subscribe({
+          next: (response: ChatWithChatResponseDto) => {
+            console.log('Audio prompt sent successfully', response);
+            this.chatId = response.chatDto.chatId;
 
-          let chatResponse: ChatResponse ={
-            chatId : response.chatDto.chatId,
-            prompt: response.prompt,
-            conetent : response.conetent
-          }
-
-          this.spinloading = false;
-
-          // this.responses.push(chatResponse); 
-          // this.hendleStreameResponce(chatResponse);
-
-          if (this.currentResponseHandle === false) {
-            this.responses.push(chatResponse);
-            this.index = this.responses.findIndex(r => r === chatResponse);
-            this.currentResponseHandle = true;
-            this.scrollToBottom();
-
-            this.sharedService.sendObject(response.chatDto)
-            this.geneareteChatTitel(response.chatDto.chatId, response.prompt);
-          } else {
-      
-            if (this.index !== -1) {
-              this.responses[this.index].conetent += response.conetent;
+            let chatResponse: ChatResponse ={
+              chatId : response.chatDto.chatId,
+              prompt: response.prompt,
+              conetent : response.conetent
             }
+
+            // this.responses.push(chatResponse); 
+            // this.hendleStreameResponce(chatResponse);
+
+            if (this.currentResponseHandle === false) {
+              this.responses.push(chatResponse);
+              this.index = this.responses.findIndex(r => r === chatResponse);
+              this.currentResponseHandle = true;
+              this.scrollToBottom();
+
+              this.sharedService.sendObject(response.chatDto)
+              this.geneareteChatTitel(response.chatDto.chatId, response.prompt);
+            } else {
+        
+              if (this.index !== -1) {
+                this.responses[this.index].conetent += response.conetent;
+              }
+            }
+            this.cdr.detectChanges();
+            // this.chatCreated.emit(response.chatDto);
+            this.selectedFile = null;
+            this.loading = false;
+            this.scrollToBottom()
+            
+          },
+          error: (error) => {
+            console.error('Error during the HTTP request:', error);
+            this.loading = false;
+            this.generationLoading = false;
+            this.cdr.detectChanges();
+          },
+          complete: () => {
+            console.log('Streaming complete');
+            this.generationLoading = false; // Завершаем индикацию загрузки
+            this.cdr.detectChanges();
           }
-          this.cdr.detectChanges();
-
-          
-
-          // this.chatCreated.emit(response.chatDto);
-          this.selectedFile = null;
-          this.loading = false;
-          this.promptText = '';
-          this.scrollToBottom()
-          
-        },
-        error: (error) => {
-          console.error('Error during the HTTP request:', error);
-          this.loading = false;
-        }
-       
       });
       this.currentResponseHandle = false;
 }
@@ -174,40 +185,32 @@ export class ChatComponent {
 
       let prompt = this.currentMode !== this.testMoode ? '@' + this.promptText.trim() : this.promptText;
       this.promptText = '';
-      this.spinloading = true;
+      this.generationLoading = true;
 
-      var index: number
-      var currentResponseHandle = false;
-
-      this.chatService.streamChatResponses(this.chatId, prompt).subscribe(
-        (response: ChatResponse) => {
-          this.spinloading = false;
+      this.currentSubscription = this.chatService.streamChatResponses(this.chatId, prompt).subscribe({
+        next: (response: ChatResponse) => {
 
           this.hendleStreameResponce(response);
 
-          // if (currentResponseHandle === false) {
-          //   this.responses.push(response);
-          //   index = this.responses.findIndex(r => r === response);
-          //   currentResponseHandle = true;
-          //   this.scrollToBottom();
-          // } else {
-
-          //   if (index !== -1) {
-          //     this.responses[index].conetent += response.conetent;
-          //   }
-          // }
-          // this.cdr.detectChanges();
-         
-          // this.geneareteChatTitel(response.chatId, response.prompt);
-
         },
-        (error) => {
-          this.spinloading = false;
+        error: (error) => {
+          this.generationLoading = false;
+          this.cdr.detectChanges();
           console.error('Error:', error)
+        },
+
+        complete: () => { // Обработчик завершения
+          console.log('Streaming complete');
+          this.generationLoading = false; // Завершаем индикацию загрузки
+          this.cdr.detectChanges();
         }
-      );
+     });
+    
     }
-    this.currentResponseHandle = false;
+   
+      // this.generationLoading = false;
+      this.currentResponseHandle = false;
+
   }
 
 
@@ -223,6 +226,7 @@ export class ChatComponent {
 
       if (this.index !== -1) {
         this.responses[this.index].conetent += response.conetent;
+        this.generationLoading = true;
       }
     }
     this.cdr.detectChanges();
