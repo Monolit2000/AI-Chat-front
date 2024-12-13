@@ -31,10 +31,10 @@
     <!-- Chat responses -->
 
     <div class="flex-1 p-4 overflow-y-auto flex-col-reverse " #responseContainer >
-      <!-- Если есть сообщения -->
+      <!-- If there are messages -->
       <ng-container *ngIf="responses.length > 0">
         <div *ngFor="let response of responses">
-          <!-- Сообщение пользователя -->
+          <!-- User message -->
           <p
             *ngIf="response.prompt !== null"
             class="text-white bg-customBgForChat p-3 rounded-lg shadow mb-2 fade-in hover:bg-customGray duration-200 break-words max-w-[90%] ml-auto text-right overflow-hidden"
@@ -42,7 +42,7 @@
             {{ response.prompt }}
           </p>
   
-          <!-- Сообщение системы -->
+          <!-- System message -->
           <p
             class="text-white bg-customBgForChat p-3 rounded-lg shadow mb-2 fade-in hover:bg-customGray duration-200 break-words max-w-[90%] overflow-hidden"
           >
@@ -51,7 +51,7 @@
         </div>
       </ng-container>
 
-        <!-- Если сообщений нет -->
+        <!-- If there are no messages -->
       <div 
         *ngIf="responses.length === 0 || chatId === 'n'" 
         class="flex items-center justify-center h-full text-gray-400 text-center rounded-lg p-4"
@@ -108,6 +108,3 @@
     </div>
   </div>
 </div>
-
-
-

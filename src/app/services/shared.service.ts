@@ -3,23 +3,21 @@ import { Subject } from 'rxjs';
 import { ChatWithChatResponseDto } from '../chat/chat-with-chat-response-dto';
 import { ChatDto } from '../chat/chat-dto';
 
-
 @Injectable({
   providedIn: 'root'
 })
 export class SharedService {
-  private subjects = new Map<string, Subject<any>>(); // Хранилище потоков
+  private subjects = new Map<string, Subject<any>>(); // Storage for streams
 
+  private objectSource = new Subject<ChatDto>(); // Data stream
+  object$ = this.objectSource.asObservable(); // Observable that components subscribe to
 
-  private objectSource = new Subject<ChatDto>(); // Поток данных
-  object$ = this.objectSource.asObservable(); // Observable, на который подписываются компоненты
-
-  // Метод для передачи объекта
+  // Method for sending an object
   sendObject(object: ChatDto) {
     this.objectSource.next(object);
   }
 
-  // Метод для передачи данных
+  // Method for sending data
   sendData<T>(key: string, data: T): void {
     if (!this.subjects.has(key)) {
       this.subjects.set(key, new Subject<T>());
@@ -27,7 +25,7 @@ export class SharedService {
     this.subjects.get(key)?.next(data);
   }
 
-  // Метод для подписки на данные
+  // Method for subscribing to data
   getData<T>(key: string) {
     if (!this.subjects.has(key)) {
       this.subjects.set(key, new Subject<T>());

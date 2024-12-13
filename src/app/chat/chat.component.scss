@@ -1,26 +1,22 @@
-
 .chatgpt-input::placeholder {
-  color: #a0aec0; /* Цвет текста placeholder */
+  color: #a0aec0; /* Placeholder text color */
 }
 
 .chatgpt-input:focus {
-  border-color: #3182ce; /* Цвет рамки при фокусе */
-  box-shadow: 0 0 10px rgba(49, 130, 206, 0.5); /* Тень при фокусе */
+  border-color: #3182ce; /* Border color on focus */
+  box-shadow: 0 0 10px rgba(49, 130, 206, 0.5); /* Shadow on focus */
 }
-
 
 .scrol {
-  scrollbar-width: thin; /* Для Firefox */
-  scrollbar-color: #000000 #131417; /* Цвет ползунка и фона */
+  scrollbar-width: thin; /* For Firefox */
+  scrollbar-color: #000000 #131417; /* Scrollbar and background color */
 }
-
 
 .wrap-text {
-  word-wrap: break-word;       /* Переносит слово на новую строку, если оно длиннее контейнера */
-  word-break: break-word;      /* Переносит строки в случае длинного текста */
-  white-space: normal;         /* Разрешает перенос строк */
+  word-wrap: break-word;       /* Wraps words to a new line if they exceed the container's width */
+  word-break: break-word;      /* Breaks lines in case of long text */
+  white-space: normal;         /* Allows line breaks */
 }
-
 
 .fade-in {
   opacity: 0;
@@ -38,17 +34,16 @@
   }
 }
 
+.animate-spin {
+  @apply inline-block;
+  animation: spin 1s linear infinite;
+}
 
-  .animate-spin {
-    @apply inline-block;
-    animation: spin 1s linear infinite;
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
   }
-  
-  @keyframes spin {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
+  100% {
+    transform: rotate(360deg);
   }
+}

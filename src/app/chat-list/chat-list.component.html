@@ -1,7 +1,7 @@
 <div class="sidebar bg-black text-white h-full p-4 overflow-y-auto">
     
     <button (click)="createChat()" class="bg-black hover:bg-customGray text-white  text-lg mb-4 rounded">
-        <i class="fa-solid fa-atom"></i> Create New Chat
+      <i class="fa-solid fa-fire"></i> Create New Chat
     </button>
     
     <hr class="border-t-2 border-gray-400 mb-4">
@@ -20,14 +20,6 @@
           (mouseleave)="handleMouseLeave(chat.chatId)"
           (dblclick)="startEditing(chat.chatId)"
         >
-          <!-- Chat title or input for renaming -->
-            <!-- <span 
-              *ngIf="editingChatId !== chat.chatId" 
-              class="truncate"
-            >
-              {{ chat.chatTitel }}
-            </span> -->
-
             <span *ngIf="!chat.animatedTitle && editingChatId !== chat.chatId " class="truncateTitel">
               {{ chat.chatTitel }}
             </span>

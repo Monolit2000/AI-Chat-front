@@ -2,5 +2,6 @@ export interface ChatDto {
     chatId: string;
     chatTitel: string;
     createdDate: string; 
-    animatedTitle?: string; // Для анимации текста
+    animatedTitle?: string; // To animate text
+
   }

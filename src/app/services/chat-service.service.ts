@@ -9,8 +9,6 @@ import { ChatWithChatResponseDto } from '../chat/chat-with-chat-response-dto';
 import { ChatTitelDto } from '../chat/chat-titel-dto';
 import { EventSourcePolyfill } from 'event-source-polyfill';
 
-
-
 @Injectable({
   providedIn: 'root' 
 })
@@ -19,25 +17,23 @@ export class ChatService {
 
   constructor(private http: HttpClient) {}
 
-
-  // Метод для стриминга через SSE
+  // Method for streaming chat responses using Server-Sent Events (SSE)
   streamChatResponses(chatId: string, promt: string): Observable<ChatResponse> {
-    // const url = `${this.apiUrl}/createStreamingChatResponseOnText?chatId=${encodeURIComponent(chatId)}&promt=${encodeURIComponent(promt)}`;
     return new Observable<ChatResponse>((observer) => {
       const eventSource = new EventSource(`${this.apiUrl}/createStreamingChatResponseOnText?chatId=${encodeURIComponent(chatId)}&promt=${encodeURIComponent(promt)}`);
 
       eventSource.onmessage = (event) => {
         const chat: ChatResponse = JSON.parse(event.data); 
-        observer.next(chat); // Отправляем данные подписчику
+        observer.next(chat); // Send data to the subscriber
       };
 
       eventSource.onerror = (error) => {
         console.error('EventSource error:', error);
         eventSource.close();
-        observer.error(error); // Уведомляем об ошибке
+        observer.error(error); // Notify about the error
       };
 
-      // Возвращаем функцию для закрытия соединения
+      // Return a function to close the connection
       return () => {
         eventSource.close();
         console.log('EventSource connection closed');
@@ -45,13 +41,13 @@ export class ChatService {
     });
   }
 
-
+  // Method for streaming chat responses via POST request and SSE
   streamChatResponsesPost<T>(url: string, formData: FormData): Observable<T> {
     return new Observable<T>((observer) => {
-      const controller = new AbortController(); // Для управления запросом (например, отмены)
+      const controller = new AbortController(); // For managing the request (e.g., cancellation)
       const signal = controller.signal;
   
-      // Отправляем POST-запрос
+      // Send POST request
       fetch(url, {
         method: 'POST',
         body: formData,
@@ -65,38 +61,38 @@ export class ChatService {
             throw new Error('ReadableStream not supported!');
           }
   
-          // Читаем поток данных
+          // Read the data stream
           const reader = response.body.getReader();
           const decoder = new TextDecoder('utf-8');
   
-          // Функция для обработки данных из потока
+          // Function to process the data from the stream
           const read = () => {
             reader.read().then(({ done, value }) => {
               if (done) {
-                observer.complete(); // Завершаем Observable, когда поток завершен
+                observer.complete(); // Complete the Observable when the stream finishes
                 return;
               }
   
               const chunk = decoder.decode(value, { stream: true });
-              const lines = chunk.split('\n\n'); // Разделяем события по SSE-протоколу
+              const lines = chunk.split('\n\n'); // Split events by SSE protocol
   
               for (const line of lines) {
                 if (line.startsWith('data:')) {
                   const json = line.replace('data:', '').trim();
-                  const data: T = JSON.parse(json); // Парсим данные
-                  observer.next(data); // Передаем данные подписчику
+                  const data: T = JSON.parse(json); // Parse the data
+                  observer.next(data); // Send data to the subscriber
                 }
               }
   
-              read(); // Читаем следующую часть
+              read(); // Continue reading the next chunk
             }).catch((error) => observer.error(error));
           };
   
-          read(); // Начинаем чтение
+          read(); // Start reading
         })
         .catch((error) => observer.error(error));
   
-      // Возвращаем функцию для отмены запроса
+      // Return a function to abort the request
       return () => {
         controller.abort();
         console.log('SSE POST connection aborted');
@@ -104,7 +100,7 @@ export class ChatService {
     });
   }
 
-
+  // Creates a streaming chat response with additional chat response data
   createStreamingChatWithChatResponse(prompt: string, audioFile: File | null = null): Observable<ChatWithChatResponseDto> {
     const formData = new FormData();
     formData.append('promt', prompt);
@@ -116,20 +112,18 @@ export class ChatService {
   
     return this.streamChatResponsesPost<ChatWithChatResponseDto>(url, formData);
   }
-  
-
 
    /**
-   * Универсальный метод для стриминга данных через SSE.
-   * @param endpoint - Относительный путь к SSE-эндпоинту
-   * @returns Observable<T> - Поток данных указанного типа
+   * Generic method for streaming data through SSE with different endpoints.
+   * @param endpoint - Relative path to the SSE endpoint
+   * @returns Observable<T> - Data stream of the specified type
    */
    streamChatResponsesGeneric<T>(endpoint: string): Observable<T> {
     return new Observable<T>((observer) => {
       const eventSource = new EventSource(`${this.apiUrl}/${endpoint}`);
 
       eventSource.onmessage = (event) => {
-        const data: T = JSON.parse(event.data); // Парсим данные как указанный тип
+        const data: T = JSON.parse(event.data); // Parse the data as the specified type
         observer.next(data);
       };
 
@@ -139,7 +133,7 @@ export class ChatService {
         observer.error(error);
       };
 
-      // Функция для завершения соединения
+      // Function to close the connection
       return () => {
         eventSource.close();
         console.log('EventSource connection closed');
@@ -147,26 +141,22 @@ export class ChatService {
     });
   }
 
-
-
-
+  // Method to send a text prompt and receive a chat response
   sendTextPrompt(chatId: string, promt: string): Observable<ChatResponse> {
-
     return this.http.post<ChatResponse>(`${this.apiUrl}/createChatResponseOnText`, { chatId: chatId ,promt: promt });
   }
 
+  // Method to rename a chat
   renameChat(chatId: string, newChatTitel: string){
-
     return this.http.post<ChatResponse>(`${this.apiUrl}/renameChat`, { chatId: chatId ,newChatTitel: newChatTitel });
   }
 
-
-  geneareteChatTitel(chatId: string, prompt: string):Observable<ChatTitelDto>{
-
+  // Method to generate a chat title
+  geneareteChatTitel(chatId: string, prompt: string):Observable<ChatTitelDto> {
     return this.http.post<ChatTitelDto>(`${this.apiUrl}/geneareteChatTitel`, { chatId: chatId ,prompt: prompt });
   }
 
-
+  // Method to send an audio prompt and receive a chat response
   sendAudioPrompt(chatId: string, file: File, prompt: string): Observable<ChatResponse> {
     const formData = new FormData();
     formData.append('audioFile', file);
@@ -182,8 +172,7 @@ export class ChatService {
     )
   }
 
-
-  
+  // Method to create a chat and get a response chat
   createChatWithResponceChat(prompt: string, file: File | null = null): Observable<ChatWithChatResponseDto> {
     const formData = new FormData();
     if(file !== null){
@@ -200,8 +189,7 @@ export class ChatService {
     )
   }
 
-
-  
+  // Method to delete a chat by chat ID
   deleteChat(chatId: string) {
     return this.http.post(`${this.apiUrl}/deleteChat`, {chatId: chatId})
       .pipe(
@@ -212,8 +200,7 @@ export class ChatService {
       );
   }
 
-
-
+  // Method to create a new chat
   createNewChat(): Observable<ChatDto> {
     return this.http.post<ChatDto>(`${this.apiUrl}/createNewChat`, {})
       .pipe(
@@ -224,9 +211,7 @@ export class ChatService {
       );
   }
 
-
-
-
+  // Method to create a new chat with a response
   createNewWithResponceChat(chatId: string, file: File, prompt: string ): Observable<ChatDto> {
     return this.http.post<ChatDto>(`${this.apiUrl}/createNewChat`, {})
       .pipe(
@@ -237,6 +222,7 @@ export class ChatService {
       );
   }
 
+  // Method to get all chats
   getAllChats(): Observable<ChatDto[]> {
     return this.http.get<ChatDto[]>(`${this.apiUrl}/GetAllChats`)
       .pipe(
@@ -247,6 +233,7 @@ export class ChatService {
       );
   }
 
+  // Method to get all chat responses
   getAllChatResponses(): Observable<ChatDto[]> {
     return this.http.get<ChatDto[]>(`${this.apiUrl}/GetAllChats`)
       .pipe(
@@ -257,6 +244,7 @@ export class ChatService {
       );
   }
 
+  // Method to get chat responses by chat ID
   getAllChatResponsesByChatId(chatId: string): Observable<ChatResponse[]> {
     return this.http.get<ChatResponse[]>(`${this.apiUrl}/getAllChatResponsesByChatId/${chatId}`)
       .pipe(
@@ -266,8 +254,4 @@ export class ChatService {
         })
       );
   }
-
-
 }
-
-
