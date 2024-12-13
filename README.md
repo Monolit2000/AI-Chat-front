@@ -1,4 +1,4 @@
-# AI Chat Application
+# AI Chat front
 
 ## Overview
 
