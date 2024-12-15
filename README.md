@@ -104,3 +104,7 @@ This project is a chat application that allows users to create, view, and intera
 The application uses SCSS and Tailwind CSS for styling. 
 
 
+
+https://github.com/user-attachments/assets/4b05fde9-b1ab-401e-a71f-422faee8e1ff
+
+
