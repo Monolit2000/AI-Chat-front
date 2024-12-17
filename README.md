@@ -4,6 +4,8 @@
 
 This project is a chat application that allows users to create, view, and interact with multiple chat conversations. It includes features such as chat creation, text and audio responses, real-time chat streaming, chat title editing, and deletion. The application also supports viewing all chats in a list with options to select, edit, or delete a chat. The system integrates with various services for managing and processing chat data.
 
+https://github.com/user-attachments/assets/4b05fde9-b1ab-401e-a71f-422faee8e1ff
+
 ## Features
 
 ### 1. **Chat Component**
@@ -105,6 +107,6 @@ The application uses SCSS and Tailwind CSS for styling.
 
 
 
-https://github.com/user-attachments/assets/4b05fde9-b1ab-401e-a71f-422faee8e1ff
+
 
 
