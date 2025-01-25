@@ -16,6 +16,12 @@ export class SidebarComponent {
 
   @Output() chatCreated = new EventEmitter<string>();
 
+  @Output() colapsed = new EventEmitter();
+
+  colapseSidebar(){
+    this.colapsed.emit();
+  }
+
   onNewChatCreated(chatId: string){
     this.chatCreated.emit(chatId);
   }

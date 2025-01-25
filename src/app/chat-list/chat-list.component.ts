@@ -30,6 +30,16 @@ export class ChatListComponent {
   oldChatTitle: string | null = null; // Stores the old title of the chat before editing
   chatDtos: ChatDto[] = []; // List of chat DTOs
 
+
+
+  isSidebarVisible: boolean = true; // Состояние видимости sidebar
+
+  toggleSidebar(): void {
+    this.isSidebarVisible = !this.isSidebarVisible;
+  }
+
+
+
   ngOnInit(): void {
     this.loadChats(); // Loads all chats when the component is initialized
 

@@ -1,8 +1,32 @@
-:host {
-    display: block;
-    height: 100%;
+
+.flex {
+  display: flex;
+}
+
+.h-screen {
+  height: 100vh;
+  background-color: black;
+}
+
+.sidebar {
+  width: 300px;
+  transition: width 0.3s ease, opacity 0.3s ease;
+  overflow: hidden;
+  background-color: black;
+  min-width: 0;
+
+  &.collapsed {
+    width: 0;
+    opacity: 0;
   }
-  
-  .flex {
-    display: flex;
+}
+
+.chat {
+  flex: 1;
+  transition: margin-left 0.3s ease, flex-basis 0.3s ease;
+  background-color: black;
+
+  &.expanded {
+    margin-left: 0;
   }
+}

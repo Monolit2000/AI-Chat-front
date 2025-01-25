@@ -1,4 +1,21 @@
 <div class="flex h-screen">
-    <app-sidebar (chatSelected)="onChatSelected($event)"></app-sidebar>
-    <app-chat class="flex-1" [currentChatId]="selectedChatId"></app-chat>
-</div>
+    <app-sidebar 
+      class="sidebar" 
+      [class.collapsed]="!isSidebarOpen" 
+      (chatSelected)="onChatSelected($event)"
+      (colapsed)="toggleSidebar()">
+    </app-sidebar>
+    <app-chat 
+      class="flex-1 chat" 
+      [currentChatId]="selectedChatId" 
+      [class.expanded]="!isSidebarOpen">
+    </app-chat>
+  </div>
+  
+  <button *ngIf="!isSidebarOpen" 
+        [ngClass]="{'opacity-100': !isSidebarOpen, 'opacity-0': isSidebarOpen}" 
+        class="top-6 left-3 p-1 z-50 cursor-pointer absolute text-white transition-opacity duration-300 ease-in-out" 
+        (click)="toggleSidebar()">
+    <i class="fa-solid fa-bars text-2xl hover:text-gray-500 duration-200"></i>
+</button>
+  

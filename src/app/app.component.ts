@@ -17,24 +17,22 @@ import { ChatService } from './services/chat-service.service';
 })
 export class AppComponent {
 
+
+
+  isSidebarOpen: boolean = true; // Флаг состояния sidebar
+
+  // Переключение sidebar
+  toggleSidebar() {
+    this.isSidebarOpen = !this.isSidebarOpen;
+  }
+
+
+  
   constructor(private cdr: ChangeDetectorRef, private chatService: ChatService) {}
 
   texts: string[] = []; // Array for storing received data
   eventSource: EventSource | null = null; // For storing the reference to EventSource
 
-  startStreaming() {
-
-     this.chatService.streamChatResponses('901fcf83-24af-4340-a4cf-759f61b0b88d', 'Test').subscribe({
-      next: (chat) => {
-        console.log('Streaming:', chat);
-        this.texts.push(chat.conetent); // Add text to the array
-        this.cdr.detectChanges();
-      },
-      error: (error) => {
-        console.error('Streaming error:', error);
-      },
-    });
-  }
 
   title = 'audio-to-text';
 
